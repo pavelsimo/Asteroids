@@ -21,7 +21,7 @@ namespace asteroids {
 
     void World::Render()
     {
-
+        DrawTriangle(50, 40, 80, 40, 65, 60);
     }
 
     void World::Update()

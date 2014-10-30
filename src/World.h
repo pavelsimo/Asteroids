@@ -1,6 +1,8 @@
 #ifndef __WORLD_H_
 #define __WORLD_H_
 
+#include "Drawing.h"
+
 namespace asteroids {
 
     class World {

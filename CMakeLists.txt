@@ -41,6 +41,9 @@ ADD_EXECUTABLE(
     ${PROJECT_NAME}
     src/main.cpp
     src/World.cpp
+    src/Drawing.cpp
+    src/MathUtilities.cpp
+    src/Vector2.cpp
 )
 
 TARGET_LINK_LIBRARIES(
