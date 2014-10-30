@@ -44,6 +44,9 @@ ADD_EXECUTABLE(
     src/Drawing.cpp
     src/MathUtilities.cpp
     src/Vector2.cpp
+    src/AABB2.cpp
+    src/Actor.cpp
+    src/Player.cpp
 )
 
 TARGET_LINK_LIBRARIES(

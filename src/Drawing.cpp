@@ -1,4 +1,5 @@
 #include "Drawing.h"
+#include <cassert>
 
 void DrawLine(
     const Vector2& origin,
@@ -17,13 +18,13 @@ void DrawLine(
     }
 
     glBegin( GL_LINES );
-        glVertex2f( origin.x, origin.y );
-        glVertex2f( end.x, end.y );
+        glVertex2f(origin.x, origin.y);
+        glVertex2f(end.x, end.y);
     glEnd();
 
     if( type != SOLID )
     {
-        glDisable( GL_LINE_STIPPLE );
+        glDisable(GL_LINE_STIPPLE);
     }
 
     glPopMatrix();
@@ -46,9 +47,9 @@ void DrawQuad(
 }
 
 void DrawTriangle(
-        GLfloat x1, GLfloat y1,
-        GLfloat x2, GLfloat y2,
-        GLfloat x3, GLfloat y3
+    GLfloat x1, GLfloat y1,
+    GLfloat x2, GLfloat y2,
+    GLfloat x3, GLfloat y3
 )
 {
     glPushMatrix();
@@ -61,5 +62,16 @@ void DrawTriangle(
     glPopMatrix();
 }
 
-
-
+void DrawPolygon(const std::vector<Vector2> &points, GLfloat lineWidth)
+{
+    glPushMatrix();
+    glLineWidth(lineWidth);
+    glBegin(GL_LINE_LOOP);
+    for(auto it = points.begin(); it != points.end(); it++)
+    {
+        Vector2 p = *it;
+        glVertex2d(p.x, p.y);
+    }
+    glEnd();
+    glPopMatrix();
+}

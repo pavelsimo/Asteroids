@@ -1,4 +1,7 @@
 #include "World.h"
+#include "Vector2.h"
+
+#include <vector>
 
 namespace asteroids {
 
@@ -21,7 +24,17 @@ namespace asteroids {
 
     void World::Render()
     {
-        DrawTriangle(50, 40, 80, 40, 65, 60);
+        // TEST
+
+        std::vector<Vector2> points;
+
+        points.push_back(Vector2(m_width/2.0 + 0.0f, m_height/2.0 + 20.0f));
+        points.push_back(Vector2(m_width/2.0 + 12.0f, m_height/2.0 + -10.0f));
+        points.push_back(Vector2(m_width/2.0 + 6.0f, m_height/2.0 + -4.0f));
+        points.push_back(Vector2(m_width/2.0 + -6.0f, m_height/2.0 + -4.0f));
+        points.push_back(Vector2(m_width/2.0 + -12.0f, m_height/2.0 + -10.0f));
+
+        DrawPolygon(points);
     }
 
     void World::Update()

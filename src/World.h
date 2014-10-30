@@ -1,7 +1,9 @@
 #ifndef __WORLD_H_
 #define __WORLD_H_
 
+#include "Player.h"
 #include "Drawing.h"
+
 
 namespace asteroids {
 
@@ -25,12 +27,10 @@ namespace asteroids {
             float GetTop() const;
 
         private:
+            //Player player;
             float m_width;
             float m_height;
     };
 }
-
-
-
 
 #endif //__WORLD_H_

@@ -5,4 +5,4 @@
 #include <GL/gl.h>
 #include <GL/glu.h>
 
-#endif
+#endif // __LOPENGL_H_
