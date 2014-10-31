@@ -62,10 +62,18 @@ void DrawTriangle(
     glPopMatrix();
 }
 
-void DrawPolygon(const std::vector<Vector2> &points, GLfloat lineWidth)
+void DrawPolygon(
+    const std::vector<Vector2> &points,
+    GLfloat x,
+    GLfloat y,
+    GLfloat degrees,
+    GLfloat lineWidth
+)
 {
     glPushMatrix();
     glLineWidth(lineWidth);
+    glTranslatef(x, y, 0.f);
+    glRotatef(degrees, 0.f, 0.f, 1.f);
     glBegin(GL_LINE_LOOP);
     for(auto it = points.begin(); it != points.end(); it++)
     {

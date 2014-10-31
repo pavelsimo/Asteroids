@@ -6,33 +6,37 @@
 #include "Vector2.h"
 #include "AABB2.h"
 
-class World;
+namespace asteroids
+{
+    class World;
 
-typedef std::vector<Vector2> PointList;
+    typedef std::vector<Vector2> PointList;
 
-class Actor {
+    class Actor {
     public:
         // ctor & dtor
         Actor();
+
         virtual ~Actor();
 
         // functions
         void Render();
-        void Update(const World& world);
+        void Update(const World &world);
         virtual void OnRender();
-        virtual void OnUpdate(const World& world);
-        bool IsColliding(const Actor& actor);
+        virtual void OnUpdate(const World &world);
+        bool IsColliding(const Actor &actor);
+        // TODO: (Pavel) Add methods to detect out of bounds actors
 
         // setters & getters
-        void SetPosition(const Vector2& position);
-        void SetVel(const Vector2& vel);
-        void SetDirection(const Vector2& direction);
-        void SetPoints(const PointList& points);
+        void SetPosition(const Vector2 &position);
+        void SetVel(const Vector2 &vel);
+        void SetDirection(const Vector2 &direction);
+        void SetPoints(const PointList &points);
         Vector2 GetVel() const;
         Vector2 GetPosition() const;
         Vector2 GetDirection() const;
         AABB2 GetAABB2() const;
-        const PointList& GetPoints() const;
+        const PointList &GetPoints() const;
 
     protected:
         Vector2 m_position;
@@ -42,7 +46,9 @@ class Actor {
 
     private:
         AABB2 m_aabb2;
-};
+    };
+
+}
 
 #endif //__ACTOR_H_
 

@@ -32,8 +32,10 @@ void DrawTriangle(
 
 void DrawPolygon(
     const std::vector<Vector2> &points,
+    GLfloat x = 0.f,
+    GLfloat y = 0.f,
+    GLfloat degrees = 0.f,
     GLfloat lineWidth = 2.f
 );
-
 
 #endif // __DRAWING_H_

@@ -9,7 +9,6 @@ namespace asteroids {
 
     class World {
         public:
-            World();
             World(const float width, const float height);
             ~World();
 
@@ -27,7 +26,7 @@ namespace asteroids {
             float GetTop() const;
 
         private:
-            //Player player;
+            Player m_player;
             float m_width;
             float m_height;
     };

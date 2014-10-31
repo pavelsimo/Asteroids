@@ -1,20 +1,14 @@
 #include "World.h"
-#include "Vector2.h"
 
-#include <vector>
+#include <iostream>
 
 namespace asteroids {
-
-    World::World()
-    {
-
-    }
 
     World::World(const float width, const float height)
     : m_width(width),
       m_height(height)
     {
-
+        m_player.SetPosition(Vector2(width / 2, height / 2));
     }
 
     World::~World()
@@ -24,27 +18,42 @@ namespace asteroids {
 
     void World::Render()
     {
-        // TEST
-
-        std::vector<Vector2> points;
-
-        points.push_back(Vector2(m_width/2.0 + 0.0f, m_height/2.0 + 20.0f));
-        points.push_back(Vector2(m_width/2.0 + 12.0f, m_height/2.0 + -10.0f));
-        points.push_back(Vector2(m_width/2.0 + 6.0f, m_height/2.0 + -4.0f));
-        points.push_back(Vector2(m_width/2.0 + -6.0f, m_height/2.0 + -4.0f));
-        points.push_back(Vector2(m_width/2.0 + -12.0f, m_height/2.0 + -10.0f));
-
-        DrawPolygon(points);
+        m_player.Render();
     }
 
     void World::Update()
     {
+        Vector2 direction = m_player.GetUpRightVector();
 
+        if(m_player.GetState() == PlayerState::MOVING_FORWARD)
+        {
+            m_player.SetVel(2 * direction);
+        }
+        else if(m_player.GetState() == PlayerState::MOVING_BACKWARD)
+        {
+            m_player.SetVel(2 * -direction);
+        }
+
+        m_player.Update(*this);
     }
 
     void World::OnKeyDown(unsigned char key)
     {
-
+        switch(key)
+        {
+            case 'w':
+                m_player.ChangeState(PlayerState::MOVING_FORWARD);
+            break;
+            case 's':
+                m_player.ChangeState(PlayerState::MOVING_BACKWARD);
+            break;
+            case 'a':
+                m_player.RotateCCW();
+            break;
+            case 'd':
+                m_player.RotateCW();
+            break;
+        }
     }
 
     void World::OnKeyUp(unsigned char key)

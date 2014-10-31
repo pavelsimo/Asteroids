@@ -2,17 +2,38 @@
 #define __PLAYER_H_
 
 #include "Actor.h"
+#include "Drawing.h"
 
-class Player : public Actor
+namespace asteroids
 {
-    public:
-        Player();
-        ~Player();
+    enum PlayerState {
+        IDLE,
+        MOVING_FORWARD,
+        MOVING_BACKWARD,
+    };
 
-        void MoveLeft();
-        void MoveRight();
-        void MoveUp();
-        void MoveDown();
-};
+    class Player : public Actor
+    {
+        public:
+            Player();
+            ~Player();
+
+            void RotateCW();
+            void RotateCCW();
+            virtual void OnUpdate(const World &world) override;
+            virtual void OnRender() override;
+
+            void ChangeState(PlayerState state);
+            PlayerState GetState();
+            Vector2 GetUpRightVector() const;
+
+        private:
+            void InitializeGeometry();
+            PlayerState m_state;
+            float m_angle;
+            Vector2 m_uprigth;
+
+    };
+}
 
 #endif //__PLAYER_H_

@@ -74,7 +74,7 @@ void Update()
 
 void OnKeyboardEvent(unsigned char key, int x, int y)
 {
-
+    g_world->OnKeyDown(key);
 }
 
 void OnMouseMoveEvent(int x, int y)
