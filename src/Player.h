@@ -8,6 +8,8 @@ namespace asteroids
 {
     enum PlayerState {
         IDLE,
+        ROTATING_CW,
+        ROTATING_CCW,
         MOVING_FORWARD,
         MOVING_BACKWARD,
     };
@@ -27,13 +29,15 @@ namespace asteroids
 
             void ChangeState(PlayerState state);
             PlayerState GetState();
-            Vector2 GetUpRightVector() const;
 
         private:
             void InitializeGeometry();
+            bool IsMoving() const;
+
             PlayerState m_state;
             float m_angle;
             Vector2 m_uprigth;
+            Vector2 m_accel;
     };
 }
 

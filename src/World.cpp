@@ -23,17 +23,21 @@ namespace asteroids {
 
     void World::Update()
     {
-        Vector2 direction = m_player.GetUpRightVector();
-
-        if(m_player.GetState() == PlayerState::MOVING_FORWARD)
+        switch(m_player.GetState())
         {
-            m_player.MoveForward();
+            case PlayerState::MOVING_FORWARD:
+                m_player.MoveForward();
+            break;
+            case PlayerState::MOVING_BACKWARD:
+                m_player.MoveBackward();
+            break;
+            case PlayerState::ROTATING_CCW:
+                m_player.RotateCCW();
+            break;
+            case PlayerState::ROTATING_CW:
+                m_player.RotateCW();
+            break;
         }
-        else if(m_player.GetState() == PlayerState::MOVING_BACKWARD)
-        {
-            m_player.MoveBackward();
-        }
-
         m_player.Update(*this);
     }
 
@@ -48,10 +52,10 @@ namespace asteroids {
                 m_player.ChangeState(PlayerState::MOVING_BACKWARD);
             break;
             case 'a':
-                m_player.RotateCCW();
+                m_player.ChangeState(PlayerState::ROTATING_CCW);
             break;
             case 'd':
-                m_player.RotateCW();
+                m_player.ChangeState(PlayerState::ROTATING_CW);
             break;
         }
     }
@@ -67,10 +71,10 @@ namespace asteroids {
                 m_player.ChangeState(PlayerState::IDLE);
                 break;
             case 'a':
-                //
+                m_player.ChangeState(PlayerState::IDLE);
                 break;
             case 'd':
-                //
+                m_player.ChangeState(PlayerState::IDLE);
                 break;
         }
     }

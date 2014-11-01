@@ -14,8 +14,8 @@ bool InitializeGL();
 bool LoadingMedia();
 void Render();
 void Update();
-void OnKeyboardEvent(unsigned char key, int x, int y);
-void OnKeyboardUpEvent(unsigned char key, int x, int y);
+void OnKeyDownEvent(unsigned char key, int x, int y);
+void OnKeyUpEvent(unsigned char key, int x, int y);
 void OnMouseClick(int button, int state, int x, int y);
 void GameLoop(int value);
 
@@ -72,9 +72,14 @@ void Update()
     g_world->Update();
 }
 
-void OnKeyboardEvent(unsigned char key, int x, int y)
+void OnKeyDownEvent(unsigned char key, int x, int y)
 {
     g_world->OnKeyDown(key);
+}
+
+void OnKeyUpEvent(unsigned char key, int x, int y)
+{
+    g_world->OnKeyUp(key);
 }
 
 void OnMouseMoveEvent(int x, int y)
@@ -111,9 +116,10 @@ int main(int argc, char** argv)
     }
 
     glutDisplayFunc(Render);
-    glutKeyboardFunc(OnKeyboardEvent);
+    glutKeyboardFunc(OnKeyDownEvent);
+    glutKeyboardUpFunc(OnKeyUpEvent);
     glutPassiveMotionFunc(OnMouseMoveEvent);
-    glutMouseFunc( OnMouseClick );
+    glutMouseFunc(OnMouseClick);
     glutTimerFunc(1000 / SCREEN_FPS, GameLoop, 0);
     glutMainLoop();
 

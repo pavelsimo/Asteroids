@@ -5,17 +5,15 @@
 
 namespace asteroids
 {
-    const float PLAYER_SPEED = 2;
-    const float ACCELERATION_FORWARD = 0.1;
-    const float ACCELERATION_BACKWARD = -0.1;
-    const float FRICTION_COEFFICIENT = 0.98;
-    const float ROTATION_ANGLE = 20;
+    const float ROTATION_ANGLE = 5;
+    const float FRICTION = 0.99;
 
     Player::Player()
     {
         InitializeGeometry();
         m_angle = 180;
         m_vel = Vector2(0, 0);
+        m_accel = Vector2(0.5, 0.5);
         m_direction.SetUnitLengthAndYawDegrees(m_angle);
         m_uprigth.SetUnitLengthAndYawDegrees(m_angle + 90);
         m_state = PlayerState::IDLE;
@@ -28,53 +26,47 @@ namespace asteroids
 
     void Player::OnUpdate(const World &world)
     {
-        if(m_state == PlayerState::MOVING_FORWARD || m_state == PlayerState::MOVING_BACKWARD)
+        if(IsMoving())
         {
             m_position += m_vel;
         }
-        m_vel = FRICTION_COEFFICIENT * m_vel;
+        else
+        {
+            m_position += m_vel;
+            m_vel *= FRICTION;
+        }
     }
 
     void Player::RotateCW()
     {
-        // TODO: (Pavel) Make this two functions share a common method
+        // TODO: (Pavel) Make RotateCW() and RotateCCW() share a common method
+        // TODO: (Pavel) Normalize Angles
         m_angle += ROTATION_ANGLE;
         m_direction.SetUnitLengthAndYawDegrees(m_angle);
         m_uprigth.SetUnitLengthAndYawDegrees(m_angle + 90);
-
-        if(m_angle > 360)
-            m_angle -= 360;
-        if(m_angle < -360)
-            m_angle += 360;
-
-        std::cout << m_angle << " "  << m_direction.x << " " << m_direction.y << " " << std::endl;
+        //std::cout << m_angle << " "  << m_direction.x << " " << m_direction.y << " " << std::endl;
     }
 
     void Player::RotateCCW()
     {
+        // TODO: (Pavel) Make RotateCW() and RotateCCW() share a common method
+        // TODO: (Pavel) Normalize Angles
         m_angle -= ROTATION_ANGLE;
         m_direction.SetUnitLengthAndYawDegrees(m_angle);
         m_uprigth.SetUnitLengthAndYawDegrees(m_angle + 90);
-
-        if(m_angle > 360)
-            m_angle -= 360;
-        if(m_angle < -360)
-            m_angle += 360;
-
-        std::cout << m_angle << " "  << m_direction.x << " " << m_direction.y << " " << std::endl;
+        //std::cout << m_angle << " "  << m_direction.x << " " << m_direction.y << " " << std::endl;
     }
-
 
     void Player::MoveForward()
     {
-        m_vel.x += m_uprigth.x * ACCELERATION_FORWARD;
-        m_vel.y += m_uprigth.y * ACCELERATION_FORWARD;
+        m_vel.x += m_uprigth.x * m_accel.x;
+        m_vel.y += m_uprigth.y * m_accel.y;
     }
 
     void Player::MoveBackward()
     {
-        m_vel.x += m_uprigth.x * ACCELERATION_BACKWARD;
-        m_vel.y += m_uprigth.y * ACCELERATION_BACKWARD;
+        m_vel.x += m_uprigth.x * -m_accel.x;
+        m_vel.y += m_uprigth.y * -m_accel.y;
     }
 
     void Player::OnRender()
@@ -92,8 +84,9 @@ namespace asteroids
         m_points.push_back(Vector2(-12.0f, -10.0f));
     }
 
-    Vector2 Player::GetUpRightVector() const {
-        return m_uprigth;
+    bool Player::IsMoving() const {
+        return m_state == PlayerState::MOVING_FORWARD
+            || m_state == PlayerState::MOVING_BACKWARD;
     }
 
     void Player::ChangeState(PlayerState state)
