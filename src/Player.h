@@ -18,6 +18,8 @@ namespace asteroids
             Player();
             ~Player();
 
+            void MoveForward();
+            void MoveBackward();
             void RotateCW();
             void RotateCCW();
             virtual void OnUpdate(const World &world) override;
@@ -32,7 +34,6 @@ namespace asteroids
             PlayerState m_state;
             float m_angle;
             Vector2 m_uprigth;
-
     };
 }
 

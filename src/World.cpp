@@ -27,11 +27,11 @@ namespace asteroids {
 
         if(m_player.GetState() == PlayerState::MOVING_FORWARD)
         {
-            m_player.SetVel(2 * direction);
+            m_player.MoveForward();
         }
         else if(m_player.GetState() == PlayerState::MOVING_BACKWARD)
         {
-            m_player.SetVel(2 * -direction);
+            m_player.MoveBackward();
         }
 
         m_player.Update(*this);
@@ -58,7 +58,21 @@ namespace asteroids {
 
     void World::OnKeyUp(unsigned char key)
     {
-
+        switch(key)
+        {
+            case 'w':
+                m_player.ChangeState(PlayerState::IDLE);
+                break;
+            case 's':
+                m_player.ChangeState(PlayerState::IDLE);
+                break;
+            case 'a':
+                //
+                break;
+            case 'd':
+                //
+                break;
+        }
     }
 
     void World::OnMouseMove(int x, int y) {
