@@ -40,11 +40,6 @@ namespace asteroids
             m_aabb2.Add(p);
         }
 
-        /*
-        std::cout << "AABB2: (" << m_aabb2.min.x << "," << m_aabb2.min.y << ") ("
-                << m_aabb2.max.x << "," << m_aabb2.max.y << ") " << std::endl;
-        */
-
         // wrap actor
         if(m_aabb2.max.x < world.GetLeft()) m_position.x = world.GetRight() - m_aabb2.GetWidth();
         if(m_aabb2.max.y < world.GetTop()) m_position.y = world.GetBottom() - m_aabb2.GetHeight();

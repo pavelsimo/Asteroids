@@ -26,13 +26,14 @@ namespace asteroids
             void RotateCCW();
             virtual void OnUpdate(const World &world) override;
             virtual void OnRender() override;
-
             void ChangeState(PlayerState state);
             PlayerState GetState();
 
         private:
             void InitializeGeometry();
             bool IsMoving() const;
+            bool IsTooFast() const;
+            void Rotate(float angle);
 
             PlayerState m_state;
             float m_angle;
