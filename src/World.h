@@ -4,7 +4,6 @@
 #include "Player.h"
 #include "Drawing.h"
 
-
 namespace asteroids {
 
     class World {
@@ -26,6 +25,7 @@ namespace asteroids {
             float GetTop() const;
 
         private:
+            bool m_pressed[256];
             Player m_player;
             float m_width;
             float m_height;

@@ -21,8 +21,12 @@ namespace asteroids
 
     void Actor::Render()
     {
-        // TODO: (Pavel) Drawing should be here
         OnRender();
+    }
+
+    void Actor::OnRender()
+    {
+        // default behavior
     }
 
     void Actor::Update(World const &world)
@@ -47,14 +51,49 @@ namespace asteroids
         if(m_aabb2.min.y > world.GetBottom()) m_position.y = world.GetTop();
     }
 
-    void Actor::OnRender()
-    {
-
-    }
-
     void Actor::OnUpdate(World const &world)
     {
+        // default behavior
+    }
 
+    void Actor::MoveForward()
+    {
+        OnMoveForward();
+    }
+
+    void Actor::OnMoveForward()
+    {
+        // default behavior
+    }
+
+    void Actor::MoveBackward()
+    {
+        OnMoveBackward();
+    }
+
+    void Actor::OnMoveBackward()
+    {
+        // default behavior
+    }
+
+    void Actor::RotateCW()
+    {
+        OnRotateCW();
+    }
+
+    void Actor::OnRotateCW()
+    {
+        // default behavior
+    }
+
+    void Actor::RotateCCW()
+    {
+        OnRotateCCW();
+    }
+
+    void Actor::OnRotateCCW()
+    {
+        // default behavior
     }
 
     bool Actor::IsColliding(const Actor &actor)
@@ -107,5 +146,4 @@ namespace asteroids
     {
         return m_points;
     }
-
 }

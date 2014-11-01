@@ -8,24 +8,30 @@
 
 namespace asteroids
 {
-    class World;
-
     typedef std::vector<Vector2> PointList;
+
+    class World;
 
     class Actor {
     public:
         // ctor & dtor
         Actor();
-
         virtual ~Actor();
 
         // functions
         void Render();
-        void Update(const World &world);
         virtual void OnRender();
+        void Update(const World &world);
         virtual void OnUpdate(const World &world);
+        void MoveForward();
+        virtual void OnMoveForward();
+        void MoveBackward();
+        virtual void OnMoveBackward();
+        void RotateCW();
+        virtual void OnRotateCW();
+        void RotateCCW();
+        virtual void OnRotateCCW();
         bool IsColliding(const Actor &actor);
-        // TODO: (Pavel) Add methods to detect out of bounds actors
 
         // setters & getters
         void SetPosition(const Vector2 &position);

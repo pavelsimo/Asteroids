@@ -17,7 +17,7 @@ namespace asteroids
         m_accel = Vector2(0.05, 0.05);
         m_direction.SetUnitLengthAndYawDegrees(m_angle);
         m_uprigth.SetUnitLengthAndYawDegrees(m_angle + 90);
-        m_state = PlayerState::IDLE;
+        m_state = 0;
     }
 
     Player::~Player()
@@ -27,6 +27,11 @@ namespace asteroids
 
     void Player::OnUpdate(const World &world)
     {
+        if(IsMovingForward()) MoveForward();
+        if(IsMovingBackward()) MoveBackward();
+        if(IsRotatingCCW()) RotateCCW();
+        if(IsRotatingCW()) RotateCW();
+
         if(IsMoving())
         {
             m_position += m_vel;
@@ -36,16 +41,6 @@ namespace asteroids
             m_position += m_vel;
             m_vel *= PLAYER_KINETIC_FRICTION;
         }
-    }
-
-    void Player::RotateCW()
-    {
-        Rotate(PLAYER_ROTATION_ANGLE);
-    }
-
-    void Player::RotateCCW()
-    {
-        Rotate(-PLAYER_ROTATION_ANGLE);
     }
 
     void Player::Rotate(float angle)
@@ -59,24 +54,6 @@ namespace asteroids
             m_angle -= 360;
         if(m_angle <= 0)
             m_angle += 360;
-    }
-
-    void Player::MoveForward()
-    {
-        if(!IsTooFast())
-        {
-            m_vel.x += m_uprigth.x * m_accel.x;
-            m_vel.y += m_uprigth.y * m_accel.y;
-        }
-    }
-
-    void Player::MoveBackward()
-    {
-        if(!IsTooFast())
-        {
-            m_vel.x += m_uprigth.x * -m_accel.x;
-            m_vel.y += m_uprigth.y * -m_accel.y;
-        }
     }
 
     bool Player::IsTooFast() const
@@ -101,17 +78,70 @@ namespace asteroids
     }
 
     bool Player::IsMoving() const {
-        return m_state == PlayerState::MOVING_FORWARD
-            || m_state == PlayerState::MOVING_BACKWARD;
+        return IsMovingForward() || IsMovingBackward();
     }
 
-    void Player::ChangeState(PlayerState state)
-    {
-        m_state = state;
+    void Player::OnMoveForward() {
+        if(!IsTooFast())
+        {
+            m_vel.x += m_uprigth.x * m_accel.x;
+            m_vel.y += m_uprigth.y * m_accel.y;
+        }
     }
 
-    PlayerState Player::GetState()
+    void Player::OnMoveBackward() {
+        if(!IsTooFast())
+        {
+            m_vel.x += m_uprigth.x * -m_accel.x;
+            m_vel.y += m_uprigth.y * -m_accel.y;
+        }
+    }
+
+    void Player::OnRotateCW() {
+        Rotate(PLAYER_ROTATION_ANGLE);
+    }
+
+    void Player::OnRotateCCW() {
+        Rotate(-PLAYER_ROTATION_ANGLE);
+    }
+
+    void Player::AddState(int bit)
     {
-        return m_state;
+        m_state |= (1 << bit);
+    }
+
+    void Player::ClearState(int bit)
+    {
+        m_state &= ~(1 << bit);
+    }
+
+    bool Player::IsIdle()
+    {
+        return m_state == 0;
+    }
+
+    bool Player::IsMovingForward() const
+    {
+        return TestBit(m_state, PlayerState::MOVING_FORWARD);
+    }
+
+    bool Player::IsMovingBackward() const
+    {
+        return TestBit(m_state, PlayerState::MOVING_BACKWARD);
+    }
+
+    bool Player::IsRotatingCW() const
+    {
+        return TestBit(m_state, PlayerState::ROTATING_CW);
+    }
+
+    bool Player::IsRotatingCCW() const
+    {
+        return TestBit(m_state, PlayerState::ROTATING_CCW);
+    }
+
+    bool Player::TestBit(int mask, int bit) const
+    {
+        return (mask & (1 << bit)) != 0;
     }
 }

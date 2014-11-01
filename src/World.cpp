@@ -23,58 +23,57 @@ namespace asteroids {
 
     void World::Update()
     {
-        switch(m_player.GetState())
-        {
-            case PlayerState::MOVING_FORWARD:
-                m_player.MoveForward();
-            break;
-            case PlayerState::MOVING_BACKWARD:
-                m_player.MoveBackward();
-            break;
-            case PlayerState::ROTATING_CCW:
-                m_player.RotateCCW();
-            break;
-            case PlayerState::ROTATING_CW:
-                m_player.RotateCW();
-            break;
-        }
+
+
         m_player.Update(*this);
     }
 
     void World::OnKeyDown(unsigned char key)
     {
+        m_pressed[key] = true;
+
         switch(key)
         {
             case 'w':
-                m_player.ChangeState(PlayerState::MOVING_FORWARD);
+            case 'W':
+                m_player.AddState(PlayerState::MOVING_FORWARD);
             break;
             case 's':
-                m_player.ChangeState(PlayerState::MOVING_BACKWARD);
+            case 'S':
+                m_player.AddState(PlayerState::MOVING_BACKWARD);
             break;
             case 'a':
-                m_player.ChangeState(PlayerState::ROTATING_CCW);
+            case 'A':
+                m_player.AddState(PlayerState::ROTATING_CCW);
             break;
             case 'd':
-                m_player.ChangeState(PlayerState::ROTATING_CW);
+            case 'D':
+                m_player.AddState(PlayerState::ROTATING_CW);
             break;
         }
     }
 
     void World::OnKeyUp(unsigned char key)
     {
+        m_pressed[key] = false;
+
         switch(key)
         {
             case 'w':
-                m_player.ChangeState(PlayerState::IDLE);
+            case 'W':
+                m_player.ClearState(PlayerState::MOVING_FORWARD);
                 break;
             case 's':
-                m_player.ChangeState(PlayerState::IDLE);
+            case 'S':
+                m_player.ClearState(PlayerState::MOVING_BACKWARD);
                 break;
             case 'a':
-                m_player.ChangeState(PlayerState::IDLE);
+            case 'A':
+                m_player.ClearState(PlayerState::ROTATING_CCW);
                 break;
             case 'd':
-                m_player.ChangeState(PlayerState::IDLE);
+            case 'D':
+                m_player.ClearState(PlayerState::ROTATING_CW);
                 break;
         }
     }
