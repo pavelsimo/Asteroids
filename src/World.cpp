@@ -23,15 +23,11 @@ namespace asteroids {
 
     void World::Update()
     {
-
-
         m_player.Update(*this);
     }
 
     void World::OnKeyDown(unsigned char key)
     {
-        m_pressed[key] = true;
-
         switch(key)
         {
             case 'w':
@@ -55,8 +51,6 @@ namespace asteroids {
 
     void World::OnKeyUp(unsigned char key)
     {
-        m_pressed[key] = false;
-
         switch(key)
         {
             case 'w':
@@ -78,11 +72,13 @@ namespace asteroids {
         }
     }
 
-    void World::OnMouseMove(int x, int y) {
+    void World::OnMouseMove(int x, int y)
+    {
 
     }
 
-    void World::OnMouseClick(int button, int state, int x, int y) {
+    void World::OnMouseClick(int button, int state, int x, int y)
+    {
 
     }
 
