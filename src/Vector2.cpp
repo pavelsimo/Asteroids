@@ -212,7 +212,7 @@ Vector2 Vector2::operator+(const Vector2 &rhs)
     return Vector2(this->x + rhs.x, this->y + rhs.y);
 }
 
-Vector2 Vector2::operator+( const float displacement )
+Vector2 Vector2::operator+(const real displacement)
 {
     Vector2 res;
     res.x = x + displacement;
@@ -225,7 +225,7 @@ Vector2 Vector2::operator-(const Vector2 &rhs)
     return Vector2(this->x - rhs.x, this->y - rhs.y);
 }
 
-Vector2 Vector2::operator-( const float displacement )
+Vector2 Vector2::operator-(const real displacement)
 {
     Vector2 res;
     res.x = x - displacement;

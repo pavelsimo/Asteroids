@@ -45,9 +45,9 @@ class Vector2
         Vector2& operator*=(real unit);
         Vector2& operator/=(real unit);
         Vector2 operator+(const Vector2 &rhs);
-        Vector2 operator+( const float displacement );
+        Vector2 operator+(const real displacement);
         Vector2 operator-(const Vector2 &rhs);
-        Vector2 operator-( const float displacement );
+        Vector2 operator-(const real displacement);
         Vector2 operator*(real unit);
         Vector2 operator/(real unit);
         Vector2 operator-();

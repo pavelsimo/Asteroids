@@ -5,16 +5,15 @@
 
 namespace asteroids
 {
-    const float PLAYER_ROTATION_ANGLE = 3; // degrees
-    const float PLAYER_MAX_SPEED = 8;
-    const float PLAYER_KINETIC_FRICTION = 0.99;
+    const float PLAYER_ROTATION_ANGLE = 3.0f; // degrees
+    const float PLAYER_MAX_SPEED = 6.f;
 
     Player::Player()
     {
         InitializeGeometry();
         m_angle = 180;
         m_vel = Vector2(0, 0);
-        m_accel = Vector2(0.05, 0.05);
+        m_accel = Vector2(0.04, 0.04);
         m_direction.SetUnitLengthAndYawDegrees(m_angle);
         m_uprigth.SetUnitLengthAndYawDegrees(m_angle + 90);
         m_state = 0;
@@ -32,15 +31,7 @@ namespace asteroids
         if(IsRotatingCCW()) RotateCCW();
         if(IsRotatingCW()) RotateCW();
 
-        if(IsMoving())
-        {
-            m_position += m_vel;
-        }
-        else
-        {
-            m_position += m_vel;
-            m_vel *= PLAYER_KINETIC_FRICTION;
-        }
+        m_position += m_vel;
     }
 
     void Player::Rotate(float angle)
@@ -48,12 +39,7 @@ namespace asteroids
         m_angle += angle;
         m_direction.SetUnitLengthAndYawDegrees(m_angle);
         m_uprigth.SetUnitLengthAndYawDegrees(m_angle + 90);
-
-        // Normalize Angle
-        if(m_angle > 360)
-            m_angle -= 360;
-        if(m_angle <= 0)
-            m_angle += 360;
+        NormalizeAngle();
     }
 
     bool Player::IsTooFast() const
@@ -69,7 +55,6 @@ namespace asteroids
 
     void Player::InitializeGeometry()
     {
-        // Initialize ship geometry
         m_points.push_back(Vector2(0.0f, 20.0f));
         m_points.push_back(Vector2(12.0f, -10.0f));
         m_points.push_back(Vector2(6.0f, -4.0f));
@@ -77,24 +62,37 @@ namespace asteroids
         m_points.push_back(Vector2(-12.0f, -10.0f));
     }
 
-    bool Player::IsMoving() const {
-        return IsMovingForward() || IsMovingBackward();
-    }
-
     void Player::OnMoveForward() {
-        if(!IsTooFast())
-        {
-            m_vel.x += m_uprigth.x * m_accel.x;
-            m_vel.y += m_uprigth.y * m_accel.y;
-        }
+        NormalizeVelocity();
+        Impulse(m_uprigth, m_accel);
     }
 
     void Player::OnMoveBackward() {
-        if(!IsTooFast())
+        NormalizeVelocity();
+        Impulse(m_uprigth, -m_accel);
+    }
+
+    void Player::Impulse(const Vector2 &dir, const Vector2 &accel)
+    {
+        m_vel.x += dir.x * accel.x;
+        m_vel.y += dir.y * accel.y;
+    }
+
+    void Player::NormalizeVelocity()
+    {
+        if(IsTooFast())
         {
-            m_vel.x += m_uprigth.x * -m_accel.x;
-            m_vel.y += m_uprigth.y * -m_accel.y;
+            float speed = m_vel.CalcLength();
+            m_vel.x = (m_vel.x / speed) * PLAYER_MAX_SPEED;
+            m_vel.y = (m_vel.y / speed) * PLAYER_MAX_SPEED;
         }
+    }
+
+
+    void Player::NormalizeAngle()
+    {
+        if(m_angle > 360) m_angle -= 360;
+        if(m_angle <= 0) m_angle += 360;
     }
 
     void Player::OnRotateCW() {
@@ -115,9 +113,18 @@ namespace asteroids
         m_state &= ~(1 << bit);
     }
 
+    bool Player::TestBit(int mask, int bit) const
+    {
+        return (mask & (1 << bit)) != 0;
+    }
+
     bool Player::IsIdle()
     {
         return m_state == 0;
+    }
+
+    bool Player::IsMoving() const {
+        return IsMovingForward() || IsMovingBackward();
     }
 
     bool Player::IsMovingForward() const
@@ -138,10 +145,5 @@ namespace asteroids
     bool Player::IsRotatingCCW() const
     {
         return TestBit(m_state, PlayerState::ROTATING_CCW);
-    }
-
-    bool Player::TestBit(int mask, int bit) const
-    {
-        return (mask & (1 << bit)) != 0;
     }
 }
