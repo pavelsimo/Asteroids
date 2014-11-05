@@ -39,6 +39,7 @@ namespace asteroids
             bool IsRotatingCW() const;
             bool IsRotatingCCW() const;
             bool IsShooting() const;
+            static bool CanDeleteBullet(const Bullet& bullet);
 
         private:
             void ApplyImpulse(const Vector2 &dir, const Vector2 &accel);
@@ -48,6 +49,8 @@ namespace asteroids
             bool IsTooFast() const;
             void Rotate(float angle);
             bool TestBit(int mask, int bit) const;
+
+            void CleanBullets();
 
             std::vector<Bullet> m_bullets;
             int m_state;

@@ -14,9 +14,11 @@ namespace asteroids
             ~Bullet();
             virtual void OnRender() override;
             virtual void OnUpdate(const World &world) override;
+            bool CanDelete() const;
 
         private:
             void InitializeGeometry();
+            int m_lifeSpan;
     };
 
 }

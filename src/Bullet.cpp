@@ -5,17 +5,21 @@ namespace asteroids
     const int BULLET_RADIUS = 3;
     const int BULLET_VERTEX = 8;
     const int BULLET_LINE_WIDTH = 1;
+    const int BULLET_LIFE_SPAN = 60;
 
     Bullet::Bullet()
+    : m_lifeSpan(BULLET_LIFE_SPAN)
     {
-        m_position.x = 0;
-        m_position.y = 0;
         InitializeGeometry();
     }
 
     Bullet::~Bullet()
     {
 
+    }
+
+    bool Bullet::CanDelete() const {
+        return !m_lifeSpan;
     }
 
     void Bullet::InitializeGeometry()
@@ -33,6 +37,7 @@ namespace asteroids
     void Bullet::OnUpdate(const World &world)
     {
         m_position += m_vel;
+        m_lifeSpan = std::max(0, m_lifeSpan - 1);
     }
 
     void Bullet::OnRender()

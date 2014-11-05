@@ -102,7 +102,6 @@ void DrawCircle(
     int offset = 360 / sides;
     for(int angle = 0; angle < 360; angle+=offset)
     {
-        // TODO: (Pavel) Uses the PI constant
         GLfloat heading = angle * PI  / 180;
         glVertex2d(cos(heading) * radius, sin(heading) * radius);
     }

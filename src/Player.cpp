@@ -2,6 +2,7 @@
 #include "World.h"
 
 #include <iostream>
+#include <algorithm>
 
 namespace asteroids
 {
@@ -39,8 +40,8 @@ namespace asteroids
 
             // Set bullet velocity
             Vector2 bulletVelocity = m_uprigth;
-            bulletVelocity.x *= (1.2 * PLAYER_MAX_SPEED);
-            bulletVelocity.y *= (1.2 * PLAYER_MAX_SPEED);
+            bulletVelocity.x *= (2 * PLAYER_MAX_SPEED);
+            bulletVelocity.y *= (2 * PLAYER_MAX_SPEED);
             bullet.SetVel(bulletVelocity);
 
             // Adding the bullet to the queue
@@ -58,16 +59,30 @@ namespace asteroids
         // update bullets
         for(auto it = m_bullets.begin(); it != m_bullets.end(); it++)
         {
-            /*
-            if(it->IsColliding(*this)) {
-                std::cout << "collide with ship" << std::endl;
-            }
-            */
             it->Update(world);
         }
 
+        // Delete all the bullets that exceed its life span
+        CleanBullets();
+
+        // Moving the ship
         m_position += m_vel;
+
+        // Decreasing the shoot timeout
         m_shootTimeout = std::max(0, m_shootTimeout - 1);
+    }
+
+    bool Player::CanDeleteBullet(const Bullet &bullet)
+    {
+        return bullet.CanDelete();
+    }
+
+    void Player::CleanBullets()
+    {
+        m_bullets.erase(
+            remove_if(m_bullets.begin(), m_bullets.end(), CanDeleteBullet),
+            m_bullets.end()
+        );
     }
 
     void Player::Rotate(float angle)
