@@ -5,11 +5,10 @@
 
 namespace asteroids
 {
-    // TODO: (Pavel) Create a ZeroVector constant
     Actor::Actor()
-    : m_position(Vector2(0, 0)),
-      m_vel(Vector2(0, 0)),
-      m_direction(Vector2(0, 0))
+    : m_position(0, 0),
+      m_vel(0, 0),
+      m_direction(0, 0)
     {
 
     }

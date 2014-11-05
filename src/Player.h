@@ -1,8 +1,11 @@
 #ifndef __PLAYER_H_
 #define __PLAYER_H_
 
-#include "Actor.h"
+#include <vector>
+
 #include "Drawing.h"
+#include "Actor.h"
+#include "Bullet.h"
 
 namespace asteroids
 {
@@ -10,7 +13,8 @@ namespace asteroids
         MOVING_FORWARD,
         MOVING_BACKWARD,
         ROTATING_CW,
-        ROTATING_CCW
+        ROTATING_CCW,
+        SHOOTING
     };
 
     class Player : public Actor
@@ -34,9 +38,10 @@ namespace asteroids
             bool IsMovingBackward() const;
             bool IsRotatingCW() const;
             bool IsRotatingCCW() const;
+            bool IsShooting() const;
 
         private:
-            void Impulse(const Vector2& dir, const Vector2& accel);
+            void ApplyImpulse(const Vector2 &dir, const Vector2 &accel);
             void InitializeGeometry();
             void NormalizeVelocity();
             void NormalizeAngle();
@@ -44,10 +49,12 @@ namespace asteroids
             void Rotate(float angle);
             bool TestBit(int mask, int bit) const;
 
+            std::vector<Bullet> m_bullets;
             int m_state;
             float m_angle;
             Vector2 m_uprigth;
             Vector2 m_accel;
+            int m_shootTimeout;
     };
 }
 

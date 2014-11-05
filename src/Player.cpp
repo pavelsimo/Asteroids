@@ -7,6 +7,7 @@ namespace asteroids
 {
     const float PLAYER_ROTATION_ANGLE = 3.0f; // degrees
     const float PLAYER_MAX_SPEED = 6.f;
+    const float PLAYER_SHOOT_TIMEOUT = 20;
 
     Player::Player()
     {
@@ -17,6 +18,7 @@ namespace asteroids
         m_direction.SetUnitLengthAndYawDegrees(m_angle);
         m_uprigth.SetUnitLengthAndYawDegrees(m_angle + 90);
         m_state = 0;
+        m_shootTimeout = 0;
     }
 
     Player::~Player()
@@ -26,12 +28,46 @@ namespace asteroids
 
     void Player::OnUpdate(const World &world)
     {
+        if(IsShooting() && !m_shootTimeout) {
+            Bullet bullet;
+
+            // Set bullet position
+            Vector2 bulletPos = m_position;
+            bulletPos.x += m_uprigth.x * 16.0f;
+            bulletPos.y += m_uprigth.y * 16.0f;
+            bullet.SetPosition(bulletPos);
+
+            // Set bullet velocity
+            Vector2 bulletVelocity = m_uprigth;
+            bulletVelocity.x *= (1.2 * PLAYER_MAX_SPEED);
+            bulletVelocity.y *= (1.2 * PLAYER_MAX_SPEED);
+            bullet.SetVel(bulletVelocity);
+
+            // Adding the bullet to the queue
+            m_bullets.push_back(bullet);
+
+            // Adding some time before allow shooting again
+            m_shootTimeout = PLAYER_SHOOT_TIMEOUT;
+        }
+
         if(IsMovingForward()) MoveForward();
         if(IsMovingBackward()) MoveBackward();
         if(IsRotatingCCW()) RotateCCW();
         if(IsRotatingCW()) RotateCW();
 
+        // update bullets
+        for(auto it = m_bullets.begin(); it != m_bullets.end(); it++)
+        {
+            /*
+            if(it->IsColliding(*this)) {
+                std::cout << "collide with ship" << std::endl;
+            }
+            */
+            it->Update(world);
+        }
+
         m_position += m_vel;
+        m_shootTimeout = std::max(0, m_shootTimeout - 1);
     }
 
     void Player::Rotate(float angle)
@@ -51,6 +87,10 @@ namespace asteroids
     void Player::OnRender()
     {
         DrawPolygon(m_points, m_position.x, m_position.y, m_angle);
+        for(auto it = m_bullets.begin(); it != m_bullets.end(); it++)
+        {
+            it->Render();
+        }
     }
 
     void Player::InitializeGeometry()
@@ -64,15 +104,15 @@ namespace asteroids
 
     void Player::OnMoveForward() {
         NormalizeVelocity();
-        Impulse(m_uprigth, m_accel);
+        ApplyImpulse(m_uprigth, m_accel);
     }
 
     void Player::OnMoveBackward() {
         NormalizeVelocity();
-        Impulse(m_uprigth, -m_accel);
+        ApplyImpulse(m_uprigth, -m_accel);
     }
 
-    void Player::Impulse(const Vector2 &dir, const Vector2 &accel)
+    void Player::ApplyImpulse(const Vector2 &dir, const Vector2 &accel)
     {
         m_vel.x += dir.x * accel.x;
         m_vel.y += dir.y * accel.y;
@@ -87,7 +127,6 @@ namespace asteroids
             m_vel.y = (m_vel.y / speed) * PLAYER_MAX_SPEED;
         }
     }
-
 
     void Player::NormalizeAngle()
     {
@@ -140,6 +179,10 @@ namespace asteroids
     bool Player::IsRotatingCW() const
     {
         return TestBit(m_state, PlayerState::ROTATING_CW);
+    }
+
+    bool Player::IsShooting() const {
+        return TestBit(m_state, PlayerState::SHOOTING);
     }
 
     bool Player::IsRotatingCCW() const

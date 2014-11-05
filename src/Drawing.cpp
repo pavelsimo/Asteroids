@@ -1,4 +1,5 @@
 #include "Drawing.h"
+#include "MathUtilities.h"
 #include <cassert>
 
 void DrawLine(
@@ -79,6 +80,31 @@ void DrawPolygon(
     {
         Vector2 p = *it;
         glVertex2d(p.x, p.y);
+    }
+    glEnd();
+    glPopMatrix();
+}
+
+void DrawCircle(
+        GLfloat x,
+        GLfloat y,
+        GLfloat radius,
+        GLfloat sides,
+        GLfloat lineWidth
+)
+{
+    assert(sides != 0);
+
+    glPushMatrix();
+    glLineWidth(lineWidth);
+    glTranslatef(x, y, 0.f);
+    glBegin(GL_LINE_LOOP);
+    int offset = 360 / sides;
+    for(int angle = 0; angle < 360; angle+=offset)
+    {
+        // TODO: (Pavel) Uses the PI constant
+        GLfloat heading = angle * PI  / 180;
+        glVertex2d(cos(heading) * radius, sin(heading) * radius);
     }
     glEnd();
     glPopMatrix();

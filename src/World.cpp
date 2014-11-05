@@ -1,6 +1,5 @@
-#include "World.h"
-
 #include <iostream>
+#include "World.h"
 
 namespace asteroids {
 
@@ -46,6 +45,9 @@ namespace asteroids {
             case 'D':
                 m_player.AddState(PlayerState::ROTATING_CW);
             break;
+            case ' ':
+                m_player.AddState(PlayerState::SHOOTING);
+            break;
         }
     }
 
@@ -69,6 +71,9 @@ namespace asteroids {
             case 'D':
                 m_player.ClearState(PlayerState::ROTATING_CW);
                 break;
+            case ' ':
+                m_player.ClearState(PlayerState::SHOOTING);
+            break;
         }
     }
 

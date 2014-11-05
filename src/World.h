@@ -1,8 +1,9 @@
 #ifndef __WORLD_H_
 #define __WORLD_H_
 
-#include "Player.h"
 #include "Drawing.h"
+#include "Player.h"
+#include "Bullet.h"
 
 namespace asteroids {
 

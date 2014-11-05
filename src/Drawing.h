@@ -1,6 +1,5 @@
 #ifndef __DRAWING_H_
 #define __DRAWING_H_
-
 #include <vector>
 
 #include "LOpenGL.h"
@@ -36,6 +35,14 @@ void DrawPolygon(
     GLfloat y = 0.f,
     GLfloat degrees = 0.f,
     GLfloat lineWidth = 2.f
+);
+
+void DrawCircle(
+    GLfloat x,
+    GLfloat y,
+    GLfloat radius = 5,
+    GLfloat sides = 20,
+    GLfloat lineWidth = 1.f
 );
 
 #endif // __DRAWING_H_
