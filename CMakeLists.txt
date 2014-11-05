@@ -47,6 +47,7 @@ ADD_EXECUTABLE(
     src/AABB2.cpp
     src/Actor.cpp
     src/Player.cpp
+    src/Bullet.cpp
 )
 
 TARGET_LINK_LIBRARIES(
