@@ -48,6 +48,8 @@ ADD_EXECUTABLE(
     src/Actor.cpp
     src/Player.cpp
     src/Bullet.cpp
+    src/Asteroid.cpp
+    src/AsteroidFactory.cpp
 )
 
 TARGET_LINK_LIBRARIES(

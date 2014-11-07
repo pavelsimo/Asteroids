@@ -1,7 +1,5 @@
 #include "MathUtilities.h"
 
-
-
 int32 ToNearestInt(real x)
 {
     return static_cast<int32>(x + 0.5);

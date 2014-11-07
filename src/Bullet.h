@@ -13,7 +13,7 @@ namespace asteroids
             Bullet();
             ~Bullet();
             virtual void OnRender() override;
-            virtual void OnUpdate(const World &world) override;
+            virtual void OnUpdate(World &world) override;
             bool CanDelete() const;
 
         private:

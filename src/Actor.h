@@ -21,8 +21,8 @@ namespace asteroids
         // functions
         void Render();
         virtual void OnRender();
-        void Update(const World &world);
-        virtual void OnUpdate(const World &world);
+        void Update(World &world);
+        virtual void OnUpdate(World &world);
         void MoveForward();
         virtual void OnMoveForward();
         void MoveBackward();

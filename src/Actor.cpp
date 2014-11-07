@@ -28,7 +28,7 @@ namespace asteroids
         // default behavior
     }
 
-    void Actor::Update(World const &world)
+    void Actor::Update(World& world)
     {
         OnUpdate(world);
 
@@ -44,13 +44,17 @@ namespace asteroids
         }
 
         // wrap actor
-        if(m_aabb2.max.x < world.GetLeft()) m_position.x = world.GetRight() - m_aabb2.GetWidth();
-        if(m_aabb2.max.y < world.GetTop()) m_position.y = world.GetBottom() - m_aabb2.GetHeight();
-        if(m_aabb2.min.x > world.GetRight()) m_position.x = world.GetLeft();
-        if(m_aabb2.min.y > world.GetBottom()) m_position.y = world.GetTop();
+        if(m_aabb2.max.x < world.GetLeft())
+            m_position.x = world.GetRight() - m_aabb2.GetWidth();
+        if(m_aabb2.max.y < world.GetTop())
+            m_position.y = world.GetBottom() - m_aabb2.GetHeight();
+        if(m_aabb2.min.x > world.GetRight())
+            m_position.x = world.GetLeft();
+        if(m_aabb2.min.y > world.GetBottom())
+            m_position.y = world.GetTop();
     }
 
-    void Actor::OnUpdate(World const &world)
+    void Actor::OnUpdate(World& world)
     {
         // default behavior
     }

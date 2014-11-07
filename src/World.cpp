@@ -1,28 +1,65 @@
 #include <iostream>
+#include <algorithm>
+
 #include "World.h"
 
-namespace asteroids {
-
+namespace asteroids
+{
     World::World(const float width, const float height)
-    : m_width(width),
-      m_height(height)
     {
+        m_width = width;
+        m_height = height;
         m_player.SetPosition(Vector2(width / 2, height / 2));
+
+        srand(time(NULL));
+
+        // Initialize Asteroids
+        for(int i = 0; i < 5; ++i)
+        {
+            Asteroid* smallAsteroid = m_asteroidFactory.CreateSmallAsteroid();
+            Asteroid* mediumAsteroid = m_asteroidFactory.CreateMediumAsteroid();
+            Asteroid* bigAsteroid = m_asteroidFactory.CreateBigAsteroid();
+
+            smallAsteroid->SetPosition(Vector2(0, 0));
+            mediumAsteroid->SetPosition(Vector2(m_width, 0));
+            bigAsteroid->SetPosition(Vector2(0, m_height));
+
+            m_asteroids.push_back(smallAsteroid);
+            m_asteroids.push_back(mediumAsteroid);
+            m_asteroids.push_back(bigAsteroid);
+        }
     }
 
     World::~World()
     {
+        // Clean bullets
+        for(auto it = m_bullets.begin(); it != m_bullets.end(); it++)
+        {
+            delete *it;
+        }
+        m_bullets.clear();
 
+        // Clean asteroids
+        for(auto it = m_asteroids.begin(); it != m_asteroids.end(); it++)
+        {
+            delete *it;
+        }
+        m_asteroids.clear();
     }
 
     void World::Render()
     {
         m_player.Render();
+        RenderAsteroids();
+        RenderBullets();
     }
 
     void World::Update()
     {
         m_player.Update(*this);
+        UpdateAsteroids();
+        UpdateBullets();
+        CleanBullets();
     }
 
     void World::OnKeyDown(unsigned char key)
@@ -115,5 +152,57 @@ namespace asteroids {
     float World::GetTop() const
     {
         return 0;
+    }
+
+    void World::RenderBullets()
+    {
+        for(auto it = m_bullets.begin(); it != m_bullets.end(); it++)
+        {
+            (*it)->Render();
+        }
+    }
+
+    void World::UpdateBullets()
+    {
+        for(auto it = m_bullets.begin(); it != m_bullets.end(); it++)
+        {
+            (*it)->Update(*this);
+        }
+    }
+
+    void World::CleanBullets()
+    {
+        // Clean bullets
+        for(auto it = m_bullets.begin(); it != m_bullets.end(); it++)
+        {
+            Bullet* bullet = *it;
+            if(bullet->CanDelete())
+            {
+                it = m_bullets.erase(it);
+                delete bullet;
+                bullet = nullptr;
+            }
+        }
+    }
+
+    void World::AddBullet(Bullet* bullet)
+    {
+        m_bullets.push_back(bullet);
+    }
+
+    void World::RenderAsteroids()
+    {
+        for(auto it = m_asteroids.begin(); it != m_asteroids.end(); it++)
+        {
+            (*it)->Render();
+        }
+    }
+
+    void World::UpdateAsteroids()
+    {
+        for(auto it = m_asteroids.begin(); it != m_asteroids.end(); it++)
+        {
+            (*it)->Update(*this);
+        }
     }
 }

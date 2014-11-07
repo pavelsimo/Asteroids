@@ -27,9 +27,8 @@ namespace asteroids
             virtual void OnMoveBackward() override;
             virtual void OnRotateCW() override;
             virtual void OnRotateCCW() override;
-            virtual void OnUpdate(const World &world) override;
+            virtual void OnUpdate(World &world) override;
             virtual void OnRender() override;
-
             void AddState(int bit);
             void ClearState(int bit);
             bool IsIdle();
@@ -39,7 +38,7 @@ namespace asteroids
             bool IsRotatingCW() const;
             bool IsRotatingCCW() const;
             bool IsShooting() const;
-            static bool CanDeleteBullet(const Bullet& bullet);
+            
 
         private:
             void ApplyImpulse(const Vector2 &dir, const Vector2 &accel);
@@ -48,14 +47,12 @@ namespace asteroids
             void NormalizeAngle();
             bool IsTooFast() const;
             void Rotate(float angle);
+            void Shoot(World &world);
             bool TestBit(int mask, int bit) const;
 
-            void CleanBullets();
-
-            std::vector<Bullet> m_bullets;
             int m_state;
             float m_angle;
-            Vector2 m_uprigth;
+            Vector2 m_upright;
             Vector2 m_accel;
             int m_shootTimeout;
     };

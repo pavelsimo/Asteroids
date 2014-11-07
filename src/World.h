@@ -1,9 +1,13 @@
 #ifndef __WORLD_H_
 #define __WORLD_H_
 
+#include <list>
+
 #include "Drawing.h"
 #include "Player.h"
 #include "Bullet.h"
+#include "AsteroidFactory.h"
+#include "Asteroid.h"
 
 namespace asteroids {
 
@@ -24,9 +28,19 @@ namespace asteroids {
             float GetRight() const;
             float GetBottom() const;
             float GetTop() const;
+            void AddBullet(Bullet* bullet);
 
         private:
+            void RenderAsteroids();
+            void UpdateAsteroids();
+            void RenderBullets();
+            void UpdateBullets();
+            void CleanBullets();
+
             Player m_player;
+            AsteroidFactory m_asteroidFactory;
+            std::list<Asteroid*> m_asteroids;
+            std::list<Bullet*> m_bullets;
             float m_width;
             float m_height;
     };

@@ -34,7 +34,7 @@ namespace asteroids
         }
     }
 
-    void Bullet::OnUpdate(const World &world)
+    void Bullet::OnUpdate(World &world)
     {
         m_position += m_vel;
         m_lifeSpan = std::max(0, m_lifeSpan - 1);

@@ -2,7 +2,7 @@
 #include "World.h"
 
 #include <iostream>
-#include <algorithm>
+
 
 namespace asteroids
 {
@@ -17,7 +17,7 @@ namespace asteroids
         m_vel = Vector2(0, 0);
         m_accel = Vector2(0.04, 0.04);
         m_direction.SetUnitLengthAndYawDegrees(m_angle);
-        m_uprigth.SetUnitLengthAndYawDegrees(m_angle + 90);
+        m_upright.SetUnitLengthAndYawDegrees(m_angle + 90);
         m_state = 0;
         m_shootTimeout = 0;
     }
@@ -27,43 +27,13 @@ namespace asteroids
 
     }
 
-    void Player::OnUpdate(const World &world)
+    void Player::OnUpdate(World &world)
     {
-        if(IsShooting() && !m_shootTimeout) {
-            Bullet bullet;
-
-            // Set bullet position
-            Vector2 bulletPos = m_position;
-            bulletPos.x += m_uprigth.x * 16.0f;
-            bulletPos.y += m_uprigth.y * 16.0f;
-            bullet.SetPosition(bulletPos);
-
-            // Set bullet velocity
-            Vector2 bulletVelocity = m_uprigth;
-            bulletVelocity.x *= (2 * PLAYER_MAX_SPEED);
-            bulletVelocity.y *= (2 * PLAYER_MAX_SPEED);
-            bullet.SetVel(bulletVelocity);
-
-            // Adding the bullet to the queue
-            m_bullets.push_back(bullet);
-
-            // Adding some time before allow shooting again
-            m_shootTimeout = PLAYER_SHOOT_TIMEOUT;
-        }
-
+        if(IsShooting() && !m_shootTimeout) Shoot(world);
         if(IsMovingForward()) MoveForward();
         if(IsMovingBackward()) MoveBackward();
         if(IsRotatingCCW()) RotateCCW();
         if(IsRotatingCW()) RotateCW();
-
-        // update bullets
-        for(auto it = m_bullets.begin(); it != m_bullets.end(); it++)
-        {
-            it->Update(world);
-        }
-
-        // Delete all the bullets that exceed its life span
-        CleanBullets();
 
         // Moving the ship
         m_position += m_vel;
@@ -72,25 +42,36 @@ namespace asteroids
         m_shootTimeout = std::max(0, m_shootTimeout - 1);
     }
 
-    bool Player::CanDeleteBullet(const Bullet &bullet)
-    {
-        return bullet.CanDelete();
-    }
-
-    void Player::CleanBullets()
-    {
-        m_bullets.erase(
-            remove_if(m_bullets.begin(), m_bullets.end(), CanDeleteBullet),
-            m_bullets.end()
-        );
-    }
-
     void Player::Rotate(float angle)
     {
         m_angle += angle;
         m_direction.SetUnitLengthAndYawDegrees(m_angle);
-        m_uprigth.SetUnitLengthAndYawDegrees(m_angle + 90);
+        m_upright.SetUnitLengthAndYawDegrees(m_angle + 90);
         NormalizeAngle();
+    }
+
+
+    void Player::Shoot(World &world)
+    {
+        Bullet *bullet = new Bullet();
+
+        // Set bullet position
+        Vector2 bulletPos = m_position;
+        bulletPos.x += m_upright.x * 16.0f;
+        bulletPos.y += m_upright.y * 16.0f;
+        bullet->SetPosition(bulletPos);
+
+        // Set bullet velocity
+        Vector2 bulletVelocity = m_upright;
+        bulletVelocity.x *= (2 * PLAYER_MAX_SPEED);
+        bulletVelocity.y *= (2 * PLAYER_MAX_SPEED);
+        bullet->SetVel(bulletVelocity);
+
+        // Adding the bullet to the world list
+        world.AddBullet(bullet);
+
+        // Adding some time before allow shooting again
+        m_shootTimeout = PLAYER_SHOOT_TIMEOUT;
     }
 
     bool Player::IsTooFast() const
@@ -101,11 +82,8 @@ namespace asteroids
 
     void Player::OnRender()
     {
+        // Render the player
         DrawPolygon(m_points, m_position.x, m_position.y, m_angle);
-        for(auto it = m_bullets.begin(); it != m_bullets.end(); it++)
-        {
-            it->Render();
-        }
     }
 
     void Player::InitializeGeometry()
@@ -119,12 +97,12 @@ namespace asteroids
 
     void Player::OnMoveForward() {
         NormalizeVelocity();
-        ApplyImpulse(m_uprigth, m_accel);
+        ApplyImpulse(m_upright, m_accel);
     }
 
     void Player::OnMoveBackward() {
         NormalizeVelocity();
-        ApplyImpulse(m_uprigth, -m_accel);
+        ApplyImpulse(m_upright, -m_accel);
     }
 
     void Player::ApplyImpulse(const Vector2 &dir, const Vector2 &accel)
