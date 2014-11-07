@@ -1,6 +1,5 @@
 #include "Asteroid.h"
 #include "World.h"
-#include <ctime>
 
 namespace asteroids
 {
@@ -63,5 +62,4 @@ namespace asteroids
     {
         m_size = size;
     }
-
 }

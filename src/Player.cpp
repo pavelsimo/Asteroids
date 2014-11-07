@@ -9,6 +9,7 @@ namespace asteroids
     const float PLAYER_ROTATION_ANGLE = 3.0f; // degrees
     const float PLAYER_MAX_SPEED = 6.f;
     const float PLAYER_SHOOT_TIMEOUT = 20;
+    const float PLAYER_DRAG = 0.999;
 
     Player::Player()
     {
@@ -37,6 +38,7 @@ namespace asteroids
 
         // Moving the ship
         m_position += m_vel;
+        m_vel *= PLAYER_DRAG;
 
         // Decreasing the shoot timeout
         m_shootTimeout = std::max(0, m_shootTimeout - 1);

@@ -60,6 +60,7 @@ namespace asteroids
         UpdateAsteroids();
         UpdateBullets();
         CleanBullets();
+        ResolveABCollisions();
     }
 
     void World::OnKeyDown(unsigned char key)
@@ -172,7 +173,6 @@ namespace asteroids
 
     void World::CleanBullets()
     {
-        // Clean bullets
         for(auto it = m_bullets.begin(); it != m_bullets.end(); it++)
         {
             Bullet* bullet = *it;
@@ -180,7 +180,6 @@ namespace asteroids
             {
                 it = m_bullets.erase(it);
                 delete bullet;
-                bullet = nullptr;
             }
         }
     }
@@ -203,6 +202,53 @@ namespace asteroids
         for(auto it = m_asteroids.begin(); it != m_asteroids.end(); it++)
         {
             (*it)->Update(*this);
+        }
+    }
+
+    void World::CreateDebris(const Asteroid &asteroid)
+    {
+        AsteroidSize size = asteroid.GetSize();
+        int numAsteroids = 2;
+
+        switch(size)
+        {
+            case AsteroidSize::BIG:
+                for(int i = 0; i < numAsteroids; ++i)
+                {
+                    Asteroid* mediumAsteroid = m_asteroidFactory.CreateMediumAsteroid();
+                    mediumAsteroid->SetPosition(asteroid.GetPosition());
+                    m_asteroids.push_back(mediumAsteroid);
+                }
+            break;
+            case AsteroidSize::MEDIUM:
+                for(int i = 0; i < numAsteroids; ++i)
+                {
+                    Asteroid* smallAsteroid = m_asteroidFactory.CreateSmallAsteroid();
+                    smallAsteroid->SetPosition(asteroid.GetPosition());
+                    m_asteroids.push_back(smallAsteroid);
+                }
+            break;
+        }
+    }
+
+    void World::ResolveABCollisions()
+    {
+        for(auto i = m_bullets.begin(); i != m_bullets.end(); i++)
+        {
+            Bullet* bullet = *i;
+            for(auto j = m_asteroids.begin(); j != m_asteroids.end(); j++)
+            {
+                Asteroid* asteroid = *j;
+                if(bullet->IsColliding(*asteroid))
+                {
+                    i = m_bullets.erase(i);
+                    CreateDebris(*asteroid);
+                    m_asteroids.erase(j);
+                    delete asteroid;
+                    delete bullet;
+                    break;
+                }
+            }
         }
     }
 }

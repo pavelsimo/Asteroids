@@ -37,6 +37,9 @@ namespace asteroids {
             void UpdateBullets();
             void CleanBullets();
 
+            void ResolveABCollisions();
+            void CreateDebris(const Asteroid &asteroid);
+
             Player m_player;
             AsteroidFactory m_asteroidFactory;
             std::list<Asteroid*> m_asteroids;
