@@ -38,7 +38,6 @@ namespace asteroids
             bool IsRotatingCW() const;
             bool IsRotatingCCW() const;
             bool IsShooting() const;
-            
 
         private:
             void ApplyImpulse(const Vector2 &dir, const Vector2 &accel);

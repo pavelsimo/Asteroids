@@ -11,6 +11,7 @@ namespace asteroids
         public:
             AsteroidFactory();
             ~AsteroidFactory();
+            Asteroid* Create(AsteroidSize size);
             Asteroid* CreateSmallAsteroid();
             Asteroid* CreateMediumAsteroid();
             Asteroid* CreateBigAsteroid();

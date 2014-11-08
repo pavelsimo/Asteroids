@@ -10,24 +10,10 @@ namespace asteroids
         m_width = width;
         m_height = height;
         m_player.SetPosition(Vector2(width / 2, height / 2));
-
         srand(time(NULL));
-
-        // Initialize Asteroids
-        for(int i = 0; i < 5; ++i)
-        {
-            Asteroid* smallAsteroid = m_asteroidFactory.CreateSmallAsteroid();
-            Asteroid* mediumAsteroid = m_asteroidFactory.CreateMediumAsteroid();
-            Asteroid* bigAsteroid = m_asteroidFactory.CreateBigAsteroid();
-
-            smallAsteroid->SetPosition(Vector2(0, 0));
-            mediumAsteroid->SetPosition(Vector2(m_width, 0));
-            bigAsteroid->SetPosition(Vector2(0, m_height));
-
-            m_asteroids.push_back(smallAsteroid);
-            m_asteroids.push_back(mediumAsteroid);
-            m_asteroids.push_back(bigAsteroid);
-        }
+        CreateAsteroids(AsteroidSize::BIG, 5);
+        CreateAsteroids(AsteroidSize::MEDIUM, 2);
+        CreateAsteroids(AsteroidSize::SMALL, 2);
     }
 
     World::~World()
@@ -60,7 +46,8 @@ namespace asteroids
         UpdateAsteroids();
         UpdateBullets();
         CleanBullets();
-        ResolveABCollisions();
+        ResolveBulletsCollisions();
+        ResolvePlayerCollisions();
     }
 
     void World::OnKeyDown(unsigned char key)
@@ -205,7 +192,7 @@ namespace asteroids
         }
     }
 
-    void World::CreateDebris(const Asteroid &asteroid)
+    void World::CreateAsteroidDebris(const Asteroid &asteroid)
     {
         AsteroidSize size = asteroid.GetSize();
         int numAsteroids = 2;
@@ -231,8 +218,22 @@ namespace asteroids
         }
     }
 
-    void World::ResolveABCollisions()
+    void World::ResolvePlayerCollisions()
     {
+        for(auto i = m_asteroids.begin(); i != m_asteroids.end(); i++)
+        {
+            Asteroid* asteroid = *i;
+            if(m_player.IsColliding(*asteroid))
+            {
+                CreatePlayerDebris();
+                break;
+            }
+        }
+    }
+
+    void World::ResolveBulletsCollisions()
+    {
+        // Bullets and asteroids collisions
         for(auto i = m_bullets.begin(); i != m_bullets.end(); i++)
         {
             Bullet* bullet = *i;
@@ -242,7 +243,7 @@ namespace asteroids
                 if(bullet->IsColliding(*asteroid))
                 {
                     i = m_bullets.erase(i);
-                    CreateDebris(*asteroid);
+                    CreateAsteroidDebris(*asteroid);
                     m_asteroids.erase(j);
                     delete asteroid;
                     delete bullet;
@@ -250,5 +251,30 @@ namespace asteroids
                 }
             }
         }
+    }
+
+    void World::CreateAsteroids(AsteroidSize size, int numAsteroids)
+    {
+        float w = m_width;
+        float h = m_height;
+        float x[] = {0, w, 0, w};
+        float y[] = {0, 0, h, h};
+        for(int i = 0, j = 0; i < numAsteroids; ++i, ++j)
+        {
+            Asteroid* asteroid = m_asteroidFactory.Create(size);
+            asteroid->SetPosition(Vector2(x[j], y[j]));
+            m_asteroids.push_back(asteroid);
+            if(j >= 4) j = 0;
+        }
+    }
+
+    void World::CreatePlayerDebris()
+    {
+        // TODO: (Pavel) Implement CreatePlayerDebris()
+    }
+
+    void World::RespawnPlayer()
+    {
+        // TODO: (Pavel) Implement RespawnPlayer()
     }
 }

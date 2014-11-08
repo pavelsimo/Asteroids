@@ -5,7 +5,7 @@ namespace asteroids
     const int BULLET_RADIUS = 3;
     const int BULLET_VERTEX = 8;
     const int BULLET_LINE_WIDTH = 1;
-    const int BULLET_LIFE_SPAN = 60;
+    const int BULLET_LIFE_SPAN = 40;
 
     Bullet::Bullet()
     : m_lifeSpan(BULLET_LIFE_SPAN)

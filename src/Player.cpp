@@ -52,7 +52,6 @@ namespace asteroids
         NormalizeAngle();
     }
 
-
     void Player::Shoot(World &world)
     {
         Bullet *bullet = new Bullet();

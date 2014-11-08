@@ -11,6 +11,9 @@
 
 namespace asteroids {
 
+    typedef std::list<Asteroid*> AsteroidList;
+    typedef std::list<Bullet*> BulletList;
+
     class World {
         public:
             World(const float width, const float height);
@@ -31,19 +34,25 @@ namespace asteroids {
             void AddBullet(Bullet* bullet);
 
         private:
+            // Asteroids
             void RenderAsteroids();
             void UpdateAsteroids();
+            void CreateAsteroids(AsteroidSize size, int numAsteroids);
+            void CreateAsteroidDebris(const Asteroid &asteroid);
+            // Bullets
             void RenderBullets();
             void UpdateBullets();
             void CleanBullets();
-
-            void ResolveABCollisions();
-            void CreateDebris(const Asteroid &asteroid);
+            void ResolveBulletsCollisions();
+            // Player
+            void ResolvePlayerCollisions();
+            void CreatePlayerDebris();
+            void RespawnPlayer();
 
             Player m_player;
             AsteroidFactory m_asteroidFactory;
-            std::list<Asteroid*> m_asteroids;
-            std::list<Bullet*> m_bullets;
+            AsteroidList m_asteroids;
+            BulletList m_bullets;
             float m_width;
             float m_height;
     };

@@ -33,9 +33,6 @@ namespace asteroids
             AsteroidSize m_size;
             void Initialize();
     };
-
 }
-
-
 
 #endif //__ASTEROID_H_

@@ -86,11 +86,11 @@ void DrawPolygon(
 }
 
 void DrawCircle(
-        GLfloat x,
-        GLfloat y,
-        GLfloat radius,
-        GLfloat sides,
-        GLfloat lineWidth
+    GLfloat x,
+    GLfloat y,
+    GLfloat radius,
+    GLfloat sides,
+    GLfloat lineWidth
 )
 {
     assert(sides != 0);

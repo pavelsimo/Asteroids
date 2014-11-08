@@ -13,6 +13,20 @@ namespace asteroids
 
     }
 
+    Asteroid *AsteroidFactory::Create(AsteroidSize size)
+    {
+        switch(size)
+        {
+            case AsteroidSize::SMALL:
+                return CreateSmallAsteroid();
+            case AsteroidSize::MEDIUM:
+                return CreateMediumAsteroid();
+            case AsteroidSize::BIG:
+                return CreateBigAsteroid();
+        }
+        return nullptr;
+    }
+
     Asteroid *AsteroidFactory::CreateSmallAsteroid()
     {
         float radius = 15.0f;

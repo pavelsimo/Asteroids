@@ -43,8 +43,8 @@ T Lerp(T const &lo, T const &hi, real t)
 }
 
 template <typename T>
-T Random(T lo, T hi) {
-
+T Random(T lo, T hi)
+{
     return lo + (rand() % (hi - lo + 1));
 }
 
