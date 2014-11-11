@@ -9,9 +9,9 @@ namespace asteroids
 {
     enum AsteroidSize
     {
-        SMALL,
-        MEDIUM,
-        BIG
+        SMALL = 1,
+        MEDIUM = 2,
+        BIG = 4
     };
 
     class World;

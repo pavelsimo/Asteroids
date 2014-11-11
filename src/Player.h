@@ -23,6 +23,7 @@ namespace asteroids
             Player();
             ~Player();
 
+            void Initialize();
             virtual void OnMoveForward() override;
             virtual void OnMoveBackward() override;
             virtual void OnRotateCW() override;

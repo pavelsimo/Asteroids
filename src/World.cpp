@@ -5,11 +5,17 @@
 
 namespace asteroids
 {
+    const int WORLD_RESPAWN_WAIT = 100;
+    const int WORLD_BLINK_RATE = 12;
+
     World::World(const float width, const float height)
     {
         m_width = width;
         m_height = height;
-        m_player.SetPosition(Vector2(width / 2, height / 2));
+        m_player = new Player();
+        m_player->SetPosition(Vector2(width * 0.5f, height * 0.5f));
+        m_respawnWait = WORLD_RESPAWN_WAIT;
+        m_state = GameState::PLAYING;
         srand(time(NULL));
         CreateAsteroids(AsteroidSize::BIG, 5);
         CreateAsteroids(AsteroidSize::MEDIUM, 2);
@@ -18,36 +24,79 @@ namespace asteroids
 
     World::~World()
     {
+        if(m_player != nullptr)
+        {
+            delete m_player;
+            m_player = nullptr;
+        }
+
         // Clean bullets
         for(auto it = m_bullets.begin(); it != m_bullets.end(); it++)
         {
-            delete *it;
+            if(*it != nullptr)
+            {
+                delete *it;
+            }
         }
         m_bullets.clear();
 
         // Clean asteroids
         for(auto it = m_asteroids.begin(); it != m_asteroids.end(); it++)
         {
-            delete *it;
+            if(*it != nullptr)
+            {
+                delete *it;
+            }
         }
         m_asteroids.clear();
     }
 
     void World::Render()
     {
-        m_player.Render();
-        RenderAsteroids();
-        RenderBullets();
+        switch (m_state)
+        {
+            case GameState::RESPAWN:
+                // Player blink
+                if(m_respawnWait % WORLD_BLINK_RATE == 0)
+                    m_player->Render();
+                RenderAsteroids();
+                RenderBullets();
+                break;
+            case GameState::PLAYING:
+                m_player->Render();
+                RenderAsteroids();
+                RenderBullets();
+                break;
+        }
     }
 
     void World::Update()
     {
-        m_player.Update(*this);
-        UpdateAsteroids();
-        UpdateBullets();
-        CleanBullets();
-        ResolveBulletsCollisions();
-        ResolvePlayerCollisions();
+        switch (m_state)
+        {
+            case GameState::RESPAWN:
+                if(!m_respawnWait)
+                {
+                    m_state = GameState::PLAYING;
+                }
+
+                m_player->Update(*this);
+                UpdateAsteroids();
+                UpdateBullets();
+                CleanBullets();
+                ResolveBulletsCollisions();
+
+                m_respawnWait = std::max(0, m_respawnWait - 1);
+                break;
+            case GameState::PLAYING:
+                m_player->Update(*this);
+                UpdateAsteroids();
+                UpdateBullets();
+                CleanBullets();
+                ResolveBulletsCollisions();
+                ResolvePlayerCollisions();
+                break;
+        }
     }
 
     void World::OnKeyDown(unsigned char key)
@@ -56,22 +105,22 @@ namespace asteroids
         {
             case 'w':
             case 'W':
-                m_player.AddState(PlayerState::MOVING_FORWARD);
+                m_player->AddState(PlayerState::MOVING_FORWARD);
             break;
             case 's':
             case 'S':
-                m_player.AddState(PlayerState::MOVING_BACKWARD);
+                m_player->AddState(PlayerState::MOVING_BACKWARD);
             break;
             case 'a':
             case 'A':
-                m_player.AddState(PlayerState::ROTATING_CCW);
+                m_player->AddState(PlayerState::ROTATING_CCW);
             break;
             case 'd':
             case 'D':
-                m_player.AddState(PlayerState::ROTATING_CW);
+                m_player->AddState(PlayerState::ROTATING_CW);
             break;
             case ' ':
-                m_player.AddState(PlayerState::SHOOTING);
+                m_player->AddState(PlayerState::SHOOTING);
             break;
         }
     }
@@ -82,22 +131,22 @@ namespace asteroids
         {
             case 'w':
             case 'W':
-                m_player.ClearState(PlayerState::MOVING_FORWARD);
+                m_player->ClearState(PlayerState::MOVING_FORWARD);
                 break;
             case 's':
             case 'S':
-                m_player.ClearState(PlayerState::MOVING_BACKWARD);
+                m_player->ClearState(PlayerState::MOVING_BACKWARD);
                 break;
             case 'a':
             case 'A':
-                m_player.ClearState(PlayerState::ROTATING_CCW);
+                m_player->ClearState(PlayerState::ROTATING_CCW);
                 break;
             case 'd':
             case 'D':
-                m_player.ClearState(PlayerState::ROTATING_CW);
+                m_player->ClearState(PlayerState::ROTATING_CW);
                 break;
             case ' ':
-                m_player.ClearState(PlayerState::SHOOTING);
+                m_player->ClearState(PlayerState::SHOOTING);
             break;
         }
     }
@@ -223,9 +272,10 @@ namespace asteroids
         for(auto i = m_asteroids.begin(); i != m_asteroids.end(); i++)
         {
             Asteroid* asteroid = *i;
-            if(m_player.IsColliding(*asteroid))
+            if(m_player->IsColliding(*asteroid))
             {
                 CreatePlayerDebris();
+                RespawnPlayer();
                 break;
             }
         }
@@ -275,6 +325,9 @@ namespace asteroids
 
     void World::RespawnPlayer()
     {
-        // TODO: (Pavel) Implement RespawnPlayer()
+        m_player->Initialize();
+        m_player->SetPosition(Vector2(m_width * 0.5f, m_height * 0.5f));
+        m_state = GameState::RESPAWN;
+        m_respawnWait = WORLD_RESPAWN_WAIT;
     }
 }

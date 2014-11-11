@@ -14,6 +14,12 @@ namespace asteroids {
     typedef std::list<Asteroid*> AsteroidList;
     typedef std::list<Bullet*> BulletList;
 
+    enum GameState
+    {
+        PLAYING,
+        RESPAWN
+    };
+
     class World {
         public:
             World(const float width, const float height);
@@ -49,7 +55,9 @@ namespace asteroids {
             void CreatePlayerDebris();
             void RespawnPlayer();
 
-            Player m_player;
+            GameState m_state;
+            int m_respawnWait;
+            Player *m_player;
             AsteroidFactory m_asteroidFactory;
             AsteroidList m_asteroids;
             BulletList m_bullets;

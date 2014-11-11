@@ -14,6 +14,16 @@ namespace asteroids
     Player::Player()
     {
         InitializeGeometry();
+        Initialize();
+    }
+
+    Player::~Player()
+    {
+
+    }
+
+    void Player::Initialize()
+    {
         m_angle = 180;
         m_vel = Vector2(0, 0);
         m_accel = Vector2(0.04, 0.04);
@@ -21,11 +31,6 @@ namespace asteroids
         m_upright.SetUnitLengthAndYawDegrees(m_angle + 90);
         m_state = 0;
         m_shootTimeout = 0;
-    }
-
-    Player::~Player()
-    {
-
     }
 
     void Player::OnUpdate(World &world)
