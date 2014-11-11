@@ -11,6 +11,7 @@ namespace asteroids
     class Bullet : public Actor {
         public:
             Bullet();
+            Bullet(int lifeSpan);
             ~Bullet();
             virtual void OnRender() override;
             virtual void OnUpdate(World &world) override;

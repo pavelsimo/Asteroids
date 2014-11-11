@@ -27,11 +27,10 @@ bool InitializeGL()
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     glOrtho(g_world->GetLeft(), g_world->GetRight(),
-            g_world->GetBottom(), g_world->GetTop(), 1.0, -1.0);
+            g_world->GetBottom(), g_world->GetTop(), -1.0, 1.0);
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
     glPushMatrix();
-
     glClearColor(0.f, 0.f, 0.f, 1.f);
     glEnable(GL_TEXTURE_2D);
 

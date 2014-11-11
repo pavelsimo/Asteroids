@@ -1,16 +1,16 @@
 #include "MathUtilities.h"
 
-int32 ToNearestInt(real x)
+int32 RoundToInt(real x)
 {
     return static_cast<int32>(x + 0.5);
 }
 
-real ToRadians(real degrees)
+real Deg2Rad(real degrees)
 {
     return degrees * (PI / 180.0);
 }
 
-real ToDegrees(real rad)
+real Rad2Deg(real rad)
 {
     return rad * (180.0 / PI);
 }
@@ -32,13 +32,13 @@ real CalcAngularDistanceInDegrees(real angle1InRadians, real angle2InRadians)
 real CalcAngularDistanceInRadians(real angle1InDegrees, real angle2InDegrees)
 {
     real angle = CalcAngularDistanceInDegrees(
-        ToDegrees(angle1InDegrees),
-        ToDegrees(angle2InDegrees)
+            Rad2Deg(angle1InDegrees),
+            Rad2Deg(angle2InDegrees)
     );
-    return ToRadians(angle);
+    return Deg2Rad(angle);
 }
 
-boolean IsNear(real lhs, real rhs, real epsilon)
+boolean IsApproximately(real lhs, real rhs, real epsilon)
 {
     return fabs(lhs - rhs) < epsilon;
 }

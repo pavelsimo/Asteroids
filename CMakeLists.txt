@@ -50,6 +50,7 @@ ADD_EXECUTABLE(
     src/Bullet.cpp
     src/Asteroid.cpp
     src/AsteroidFactory.cpp
+    src/EnemyShip.cpp
 )
 
 TARGET_LINK_LIBRARIES(

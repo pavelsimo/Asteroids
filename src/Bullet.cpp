@@ -13,6 +13,12 @@ namespace asteroids
         InitializeGeometry();
     }
 
+    Bullet::Bullet(int lifeSpan)
+    : m_lifeSpan(lifeSpan)
+    {
+        InitializeGeometry();
+    }
+
     Bullet::~Bullet()
     {
 

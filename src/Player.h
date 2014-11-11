@@ -41,13 +41,13 @@ namespace asteroids
             bool IsShooting() const;
 
         private:
+            void Shoot(World &world);
             void ApplyImpulse(const Vector2 &dir, const Vector2 &accel);
             void InitializeGeometry();
             void NormalizeVelocity();
             void NormalizeAngle();
             bool IsTooFast() const;
             void Rotate(float angle);
-            void Shoot(World &world);
             bool TestBit(int mask, int bit) const;
 
             int m_state;

@@ -60,14 +60,14 @@ void Vector2::SetUnitLengthAndYawRadians(real angleInRadians)
 
 void Vector2::SetUnitLengthAndYawDegrees(real angleInDegrees)
 {
-    SetLengthAndYawRadians(1, ToRadians(angleInDegrees));
+    SetLengthAndYawRadians(1, Deg2Rad(angleInDegrees));
 }
 
 void Vector2::SetLengthAndYawDegrees(
     real radius,
     real angleInDegrees)
 {
-    SetLengthAndYawRadians(radius, ToRadians(angleInDegrees));
+    SetLengthAndYawRadians(radius, Deg2Rad(angleInDegrees));
 }
 
 void Vector2::SetLength(real radius)
@@ -105,17 +105,17 @@ Vector2& Vector2::RotateRadians(real angleInRadians)
 
 Vector2& Vector2::RotateDegrees(real angleInDegrees)
 {
-    return RotateRadians(ToRadians(angleInDegrees));
+    return RotateRadians(Deg2Rad(angleInDegrees));
 }
 
 Vector2& Vector2::Rotate90Degrees()
 {
-    return RotateRadians(ToRadians(90));
+    return RotateRadians(Deg2Rad(90));
 }
 
 Vector2& Vector2::RotateMinus90Degrees()
 {
-    return RotateRadians(ToRadians(-90));
+    return RotateRadians(Deg2Rad(-90));
 }
 
 Vector2& Vector2::Reverse()
@@ -165,7 +165,7 @@ real Vector2::CalcYawRadians() const
 
 real Vector2::CalcYawDegrees() const
 {
-    return ToDegrees(this->CalcYawRadians());
+    return Rad2Deg(this->CalcYawRadians());
 }
 
 Vector2 & Vector2::operator=(const Vector2 &rhs)
@@ -251,7 +251,7 @@ Vector2 Vector2::operator-()
 
 bool Vector2::operator==(const Vector2 &rhs)
 {
-    return IsNear(this->x, rhs.x) && IsNear(this->y, rhs.y);
+    return IsApproximately(this->x, rhs.x) && IsApproximately(this->y, rhs.y);
 }
 
 bool Vector2::operator!=(const Vector2 &rhs)

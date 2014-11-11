@@ -12,10 +12,18 @@ namespace asteroids
     {
         m_width = width;
         m_height = height;
+        m_state = GameState::PLAYING;
+        m_respawnWait = WORLD_RESPAWN_WAIT;
+
+        // Player
         m_player = new Player();
         m_player->SetPosition(Vector2(width * 0.5f, height * 0.5f));
-        m_respawnWait = WORLD_RESPAWN_WAIT;
-        m_state = GameState::PLAYING;
+
+        // Enemy ship
+        m_enemyShip = new EnemyShip();
+        m_enemyShip->SetPosition(Vector2(0, 0));
+
+        // Asteroids wave
         srand(time(NULL));
         CreateAsteroids(AsteroidSize::BIG, 5);
         CreateAsteroids(AsteroidSize::MEDIUM, 2);
@@ -28,6 +36,12 @@ namespace asteroids
         {
             delete m_player;
             m_player = nullptr;
+        }
+
+        if(m_enemyShip != nullptr)
+        {
+            delete m_enemyShip;
+            m_enemyShip = nullptr;
         }
 
         // Clean bullets
@@ -59,11 +73,13 @@ namespace asteroids
                 // Player blink
                 if(m_respawnWait % WORLD_BLINK_RATE == 0)
                     m_player->Render();
+                m_enemyShip->Render();
                 RenderAsteroids();
                 RenderBullets();
                 break;
             case GameState::PLAYING:
                 m_player->Render();
+                m_enemyShip->Render();
                 RenderAsteroids();
                 RenderBullets();
                 break;
@@ -79,22 +95,25 @@ namespace asteroids
                 {
                     m_state = GameState::PLAYING;
                 }
-
                 m_player->Update(*this);
+                m_enemyShip->Update(*this);
                 UpdateAsteroids();
                 UpdateBullets();
                 CleanBullets();
-                ResolveBulletsCollisions();
-
+                ResolveAsteroidBulletCollisions();
                 m_respawnWait = std::max(0, m_respawnWait - 1);
                 break;
             case GameState::PLAYING:
                 m_player->Update(*this);
+                m_enemyShip->Update(*this);
                 UpdateAsteroids();
                 UpdateBullets();
                 CleanBullets();
-                ResolveBulletsCollisions();
-                ResolvePlayerCollisions();
+                // Asteroid & Bullets Collisions
+                ResolveAsteroidBulletCollisions();
+                // Player Collisions
+                ResolvePlayerAsteroidCollisions();
+                ResolvePlayerBulletCollisions();
                 break;
         }
     }
@@ -267,8 +286,9 @@ namespace asteroids
         }
     }
 
-    void World::ResolvePlayerCollisions()
+    void World::ResolvePlayerAsteroidCollisions()
     {
+        // TODO: (Pavel) Add a common method for this and ResolvePlayerBulletCollisions()
         for(auto i = m_asteroids.begin(); i != m_asteroids.end(); i++)
         {
             Asteroid* asteroid = *i;
@@ -281,7 +301,22 @@ namespace asteroids
         }
     }
 
-    void World::ResolveBulletsCollisions()
+    void World::ResolvePlayerBulletCollisions()
+    {
+        // TODO: (Pavel) Add a common method for this and ResolvePlayerAsteroidCollisions()
+        for(auto i = m_bullets.begin(); i != m_bullets.end(); i++)
+        {
+            Bullet* bullet = *i;
+            if(m_player->IsColliding(*bullet))
+            {
+                CreatePlayerDebris();
+                RespawnPlayer();
+                break;
+            }
+        }
+    }
+
+    void World::ResolveAsteroidBulletCollisions()
     {
         // Bullets and asteroids collisions
         for(auto i = m_bullets.begin(); i != m_bullets.end(); i++)
@@ -329,5 +364,9 @@ namespace asteroids
         m_player->SetPosition(Vector2(m_width * 0.5f, m_height * 0.5f));
         m_state = GameState::RESPAWN;
         m_respawnWait = WORLD_RESPAWN_WAIT;
+    }
+
+    const Player& World::GetPlayer() const {
+        return *m_player;
     }
 }

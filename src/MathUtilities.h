@@ -12,7 +12,7 @@ typedef bool boolean;
 const real EPS = 1e-6;
 const real PI = 3.14159265358979f;
 
-int32 ToNearestInt(real x);
+int32 RoundToInt(real x);
 
 template <typename T>
 T Clamp(T x, T lo, T hi)
@@ -48,9 +48,9 @@ T Random(T lo, T hi)
     return lo + (rand() % (hi - lo + 1));
 }
 
-real ToDegrees(real radians);
+real Rad2Deg(real radians);
 
-real ToRadians(real degrees);
+real Deg2Rad(real degrees);
 
 real CalcAngularDistanceInRadians(real angle1InRadians, real angle2InRadians);
 
@@ -58,7 +58,7 @@ real CalcAngularDistanceInDegrees(real angle1InDegrees, real angle2InDegrees);
 
 boolean IsPowerOf2(int32 x);
 
-boolean IsNear(real lhs, real rhs, real epsilon = 0.001);
+boolean IsApproximately(real lhs, real rhs, real epsilon = 0.001);
 
 
 #endif // __MATH_UTILITIES_H_

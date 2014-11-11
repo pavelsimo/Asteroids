@@ -5,6 +5,7 @@
 
 #include "Drawing.h"
 #include "Player.h"
+#include "EnemyShip.h"
 #include "Bullet.h"
 #include "AsteroidFactory.h"
 #include "Asteroid.h"
@@ -38,6 +39,7 @@ namespace asteroids {
             float GetBottom() const;
             float GetTop() const;
             void AddBullet(Bullet* bullet);
+            const Player& GetPlayer() const;
 
         private:
             // Asteroids
@@ -45,19 +47,25 @@ namespace asteroids {
             void UpdateAsteroids();
             void CreateAsteroids(AsteroidSize size, int numAsteroids);
             void CreateAsteroidDebris(const Asteroid &asteroid);
+
             // Bullets
             void RenderBullets();
             void UpdateBullets();
             void CleanBullets();
-            void ResolveBulletsCollisions();
+
             // Player
-            void ResolvePlayerCollisions();
             void CreatePlayerDebris();
             void RespawnPlayer();
+
+            // Collisions
+            void ResolvePlayerAsteroidCollisions();
+            void ResolvePlayerBulletCollisions();
+            void ResolveAsteroidBulletCollisions();
 
             GameState m_state;
             int m_respawnWait;
             Player *m_player;
+            EnemyShip *m_enemyShip;
             AsteroidFactory m_asteroidFactory;
             AsteroidList m_asteroids;
             BulletList m_bullets;
