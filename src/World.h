@@ -2,6 +2,7 @@
 #define __WORLD_H_
 
 #include <list>
+#include <chrono>
 
 #include "Drawing.h"
 #include "Player.h"
@@ -14,6 +15,9 @@ namespace asteroids {
 
     typedef std::list<Asteroid*> AsteroidList;
     typedef std::list<Bullet*> BulletList;
+    typedef std::chrono::high_resolution_clock Clock;
+    typedef std::chrono::high_resolution_clock::time_point Time;
+    typedef std::chrono::milliseconds Duration;
 
     enum GameState
     {
@@ -47,13 +51,23 @@ namespace asteroids {
             void UpdateAsteroids();
             void CreateAsteroids(AsteroidSize size, int numAsteroids);
             void CreateAsteroidDebris(const Asteroid &asteroid);
+            void DeleteAllAsteroids();
 
             // Bullets
             void RenderBullets();
             void UpdateBullets();
-            void CleanBullets();
+            void DeleteFarAwayBullets();
+            void DeleteAllBullets();
+
+            // EnemyShip
+            void UpdateEnemyShip();
+            void RenderEnemyShip();
+            void DeleteEnemyShip();
 
             // Player
+            void UpdatePlayer();
+            void RenderPlayer();
+            void DeletePlayer();
             void CreatePlayerDebris();
             void RespawnPlayer();
 
@@ -61,9 +75,10 @@ namespace asteroids {
             void ResolvePlayerAsteroidCollisions();
             void ResolvePlayerBulletCollisions();
             void ResolveAsteroidBulletCollisions();
+            void ResolveEnemyShipBulletCollisions();
 
             GameState m_state;
-            int m_respawnWait;
+            int m_playerRespawnWait;
             Player *m_player;
             EnemyShip *m_enemyShip;
             AsteroidFactory m_asteroidFactory;
@@ -71,6 +86,10 @@ namespace asteroids {
             BulletList m_bullets;
             float m_width;
             float m_height;
+            Time m_prevTime;
+            Time m_curTime;
+            Time m_startTime;
+            unsigned long m_accTime;
     };
 }
 

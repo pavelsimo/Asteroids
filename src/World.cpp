@@ -5,15 +5,16 @@
 
 namespace asteroids
 {
-    const int WORLD_RESPAWN_WAIT = 100;
     const int WORLD_BLINK_RATE = 12;
+    const int WORLD_ENEMYSHIP_RESPAWN_WAIT = 500;
+    const int WORLD_PLAYER_RESPAWN_WAIT = 100;
 
     World::World(const float width, const float height)
     {
         m_width = width;
         m_height = height;
         m_state = GameState::PLAYING;
-        m_respawnWait = WORLD_RESPAWN_WAIT;
+        m_playerRespawnWait = WORLD_PLAYER_RESPAWN_WAIT;
 
         // Player
         m_player = new Player();
@@ -21,7 +22,7 @@ namespace asteroids
 
         // Enemy ship
         m_enemyShip = new EnemyShip();
-        m_enemyShip->SetPosition(Vector2(0, 0));
+        m_enemyShip->SetPosition(Vector2(0, height * 0.5f));
 
         // Asteroids wave
         srand(time(NULL));
@@ -32,37 +33,10 @@ namespace asteroids
 
     World::~World()
     {
-        if(m_player != nullptr)
-        {
-            delete m_player;
-            m_player = nullptr;
-        }
-
-        if(m_enemyShip != nullptr)
-        {
-            delete m_enemyShip;
-            m_enemyShip = nullptr;
-        }
-
-        // Clean bullets
-        for(auto it = m_bullets.begin(); it != m_bullets.end(); it++)
-        {
-            if(*it != nullptr)
-            {
-                delete *it;
-            }
-        }
-        m_bullets.clear();
-
-        // Clean asteroids
-        for(auto it = m_asteroids.begin(); it != m_asteroids.end(); it++)
-        {
-            if(*it != nullptr)
-            {
-                delete *it;
-            }
-        }
-        m_asteroids.clear();
+        DeletePlayer();
+        DeleteEnemyShip();
+        DeleteAllBullets();
+        DeleteAllAsteroids();
     }
 
     void World::Render()
@@ -70,16 +44,18 @@ namespace asteroids
         switch (m_state)
         {
             case GameState::RESPAWN:
-                // Player blink
-                if(m_respawnWait % WORLD_BLINK_RATE == 0)
-                    m_player->Render();
-                m_enemyShip->Render();
+                // BLINK
+                if(m_playerRespawnWait % WORLD_BLINK_RATE == 0)
+                {
+                    RenderPlayer();
+                }
+                RenderEnemyShip();
                 RenderAsteroids();
                 RenderBullets();
                 break;
             case GameState::PLAYING:
-                m_player->Render();
-                m_enemyShip->Render();
+                RenderPlayer();
+                RenderEnemyShip();
                 RenderAsteroids();
                 RenderBullets();
                 break;
@@ -91,31 +67,32 @@ namespace asteroids
         switch (m_state)
         {
             case GameState::RESPAWN:
-                if(!m_respawnWait)
+                if(!m_playerRespawnWait)
                 {
                     m_state = GameState::PLAYING;
                 }
-                m_player->Update(*this);
-                m_enemyShip->Update(*this);
+                UpdatePlayer();
+                UpdateEnemyShip();
                 UpdateAsteroids();
                 UpdateBullets();
-                CleanBullets();
+                DeleteFarAwayBullets();
                 ResolveAsteroidBulletCollisions();
-                m_respawnWait = std::max(0, m_respawnWait - 1);
+                //ResolveEnemyShipBulletCollisions();
+                m_playerRespawnWait = std::max(0, m_playerRespawnWait - 1);
                 break;
             case GameState::PLAYING:
-                m_player->Update(*this);
-                m_enemyShip->Update(*this);
+                UpdatePlayer();
+                UpdateEnemyShip();
                 UpdateAsteroids();
                 UpdateBullets();
-                CleanBullets();
-                // Asteroid & Bullets Collisions
+                DeleteFarAwayBullets();
                 ResolveAsteroidBulletCollisions();
-                // Player Collisions
                 ResolvePlayerAsteroidCollisions();
                 ResolvePlayerBulletCollisions();
+                //ResolveEnemyShipBulletCollisions();
                 break;
         }
+        m_prevTime = m_curTime;
     }
 
     void World::OnKeyDown(unsigned char key)
@@ -226,7 +203,7 @@ namespace asteroids
         }
     }
 
-    void World::CleanBullets()
+    void World::DeleteFarAwayBullets()
     {
         for(auto it = m_bullets.begin(); it != m_bullets.end(); it++)
         {
@@ -316,6 +293,19 @@ namespace asteroids
         }
     }
 
+    void World::ResolveEnemyShipBulletCollisions()
+    {
+        for(auto i = m_bullets.begin(); i != m_bullets.end(); i++)
+        {
+            Bullet* bullet = *i;
+            if(m_enemyShip->IsColliding(*bullet))
+            {
+                DeleteEnemyShip();
+                break;
+            }
+        }
+    }
+
     void World::ResolveAsteroidBulletCollisions()
     {
         // Bullets and asteroids collisions
@@ -363,10 +353,86 @@ namespace asteroids
         m_player->Initialize();
         m_player->SetPosition(Vector2(m_width * 0.5f, m_height * 0.5f));
         m_state = GameState::RESPAWN;
-        m_respawnWait = WORLD_RESPAWN_WAIT;
+        m_playerRespawnWait = WORLD_PLAYER_RESPAWN_WAIT;
     }
 
-    const Player& World::GetPlayer() const {
+    const Player& World::GetPlayer() const
+    {
         return *m_player;
+    }
+
+
+    void World::UpdateEnemyShip()
+    {
+        if(m_enemyShip != nullptr)
+        {
+            m_enemyShip->Update(*this);
+        }
+    }
+
+    void World::RenderEnemyShip()
+    {
+        if(m_enemyShip != nullptr)
+        {
+            m_enemyShip->Render();
+        }
+    }
+
+    void World::UpdatePlayer()
+    {
+        if(m_player != nullptr)
+        {
+            m_player->Update(*this);
+        }
+    }
+
+    void World::RenderPlayer()
+    {
+        if(m_player != nullptr)
+        {
+            m_player->Render();
+        }
+    }
+
+    void World::DeleteEnemyShip()
+    {
+        if(m_enemyShip != nullptr)
+        {
+            delete m_enemyShip;
+            m_enemyShip = nullptr;
+        }
+    }
+
+    void World::DeletePlayer()
+    {
+        if(m_player != nullptr)
+        {
+            delete m_player;
+            m_player = nullptr;
+        }
+    }
+
+    void World::DeleteAllAsteroids()
+    {
+        for(auto it = m_asteroids.begin(); it != m_asteroids.end(); it++)
+        {
+            if(*it != nullptr)
+            {
+                delete *it;
+            }
+        }
+        m_asteroids.clear();
+    }
+
+    void World::DeleteAllBullets()
+    {
+        for(auto it = m_bullets.begin(); it != m_bullets.end(); it++)
+        {
+            if(*it != nullptr)
+            {
+                delete *it;
+            }
+        }
+        m_bullets.clear();
     }
 }

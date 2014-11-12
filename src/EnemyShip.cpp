@@ -1,15 +1,15 @@
 #include "EnemyShip.h"
 #include "MathUtilities.h"
 #include "World.h"
+#include <iostream>
 
 namespace asteroids
 {
-    const int ENEMYSHIP_SHOOT_TIMEOUT = 100;
+    const int ENEMYSHIP_SHOOT_TIMEOUT = 200;
     const int ENEMYSHIP_BULLET_SPEED = 3;
     const int ENEMYSHIP_BULLET_LIFESPAN = 100;
 
     EnemyShip::EnemyShip()
-    : Actor()
     {
         InitializeGeometry();
     }
@@ -21,10 +21,16 @@ namespace asteroids
 
     void EnemyShip::OnUpdate(World &world)
     {
-        if(!m_shootTimeout) Shoot(world);
-        m_position += m_vel;
-        m_direction = Vector2(1, 1);
-        m_vel = m_direction;
+        if(!m_shootTimeout)
+        {
+            Shoot(world);
+        }
+
+        float amplitude = 2.5f;
+        m_position.x += Random<int>(5, 10) / 10.0;
+        Vector2 dir;
+        dir.SetUnitLengthAndYawDegrees(m_position.x);
+        m_position.y += amplitude * dir.y;
         m_shootTimeout = std::max(0, m_shootTimeout - 1);
     }
 
@@ -77,14 +83,14 @@ namespace asteroids
     void EnemyShip::InitializeGeometry()
     {
         // Using just the outer body for collisions
-        m_points.push_back(Vector2(0.0f,0.0f));
-        m_points.push_back(Vector2(9.0f,5.0f));
-        m_points.push_back(Vector2(12.0f,9.0f));
-        m_points.push_back(Vector2(18.0f,9.0f));
-        m_points.push_back(Vector2(21.0f,5.0f));
-        m_points.push_back(Vector2(30.0f,0.0f));
-        m_points.push_back(Vector2(22.0f,-5.0f));
-        m_points.push_back(Vector2(8.0f,-5.0f));
+        m_points.push_back(Vector2(0.0f, 0.0f));
+        m_points.push_back(Vector2(9.0f, 5.0f));
+        m_points.push_back(Vector2(12.0f, 9.0f));
+        m_points.push_back(Vector2(18.0f, 9.0f));
+        m_points.push_back(Vector2(21.0f, 5.0f));
+        m_points.push_back(Vector2(30.0f, 0.0f));
+        m_points.push_back(Vector2(22.0f, -5.0f));
+        m_points.push_back(Vector2(8.0f, -5.0f));
     }
 
     void EnemyShip::Shoot(World &world)
