@@ -11,10 +11,10 @@ namespace asteroids
         public:
             AsteroidFactory();
             ~AsteroidFactory();
-            Asteroid* Create(AsteroidSize size);
-            Asteroid* CreateSmallAsteroid();
-            Asteroid* CreateMediumAsteroid();
-            Asteroid* CreateBigAsteroid();
+            Asteroid* Create(AsteroidSize size, int speed = 2);
+            Asteroid* CreateSmallAsteroid(int speed);
+            Asteroid* CreateMediumAsteroid(int speed);
+            Asteroid* CreateBigAsteroid(int speed);
     };
 }
 

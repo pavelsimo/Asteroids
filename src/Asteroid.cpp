@@ -5,10 +5,11 @@ namespace asteroids
 {
     const float ASTEROID_ROTATION_ANGLE = 1.f;
 
-    Asteroid::Asteroid(float radius, int numVertices)
+    Asteroid::Asteroid(float radius, int numVertices, int speed)
     : Actor(),
       m_radius(radius),
-      m_numVertices(numVertices)
+      m_numVertices(numVertices),
+      m_speed(speed)
     {
         Initialize();
     }
@@ -33,12 +34,11 @@ namespace asteroids
         // Initialize the velocity
         int positiveX = Random<int>(0, 1);
         int positiveY = Random<int>(0, 1);
-        Vector2 vel = Vector2(Random<int>(1, 100), Random<int>(1, 100));
-        float speed = Random<int>(10, 20) / 20.0f;
-        if(!positiveX) vel.x = -vel.x;
-        if(!positiveY) vel.y = -vel.y;
-        vel.Normalize();
-        m_vel = vel * speed;
+        Vector2 dir = Vector2(Random<int>(1, 100), Random<int>(1, 100));
+        if(!positiveX) dir.x = -dir.x;
+        if(!positiveY) dir.y = -dir.y;
+        dir.Normalize();
+        m_vel = dir * m_speed;
     }
 
     void Asteroid::OnUpdate(World &world)

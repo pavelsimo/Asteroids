@@ -8,6 +8,7 @@ namespace asteroids
     const int WORLD_BLINK_RATE = 12;
     const int WORLD_ENEMYSHIP_RESPAWN_WAIT = 500;
     const int WORLD_PLAYER_RESPAWN_WAIT = 100;
+    const int WORLD_ASTEROID_MAX_SPEED = 4;
 
     World::World(const float width, const float height)
     {
@@ -15,6 +16,9 @@ namespace asteroids
         m_height = height;
         m_state = GameState::PLAYING;
         m_playerRespawnWait = WORLD_PLAYER_RESPAWN_WAIT;
+        m_startNextWave = true;
+        m_waveId = 1;
+        m_waveAsteroidSpeed = 1;
 
         // Player
         m_player = new Player();
@@ -24,11 +28,8 @@ namespace asteroids
         m_enemyShip = new EnemyShip();
         m_enemyShip->SetPosition(Vector2(0, height * 0.5f));
 
-        // Asteroids wave
+        // Random Seed
         srand(time(NULL));
-        CreateAsteroids(AsteroidSize::BIG, 5);
-        CreateAsteroids(AsteroidSize::MEDIUM, 2);
-        CreateAsteroids(AsteroidSize::SMALL, 2);
     }
 
     World::~World()
@@ -64,6 +65,8 @@ namespace asteroids
 
     void World::Update()
     {
+        CreateAsteroidsWave();
+
         switch (m_state)
         {
             case GameState::RESPAWN:
@@ -92,7 +95,6 @@ namespace asteroids
                 //ResolveEnemyShipBulletCollisions();
                 break;
         }
-        m_prevTime = m_curTime;
     }
 
     void World::OnKeyDown(unsigned char key)
@@ -247,7 +249,7 @@ namespace asteroids
             case AsteroidSize::BIG:
                 for(int i = 0; i < numAsteroids; ++i)
                 {
-                    Asteroid* mediumAsteroid = m_asteroidFactory.CreateMediumAsteroid();
+                    Asteroid* mediumAsteroid = m_asteroidFactory.CreateMediumAsteroid(m_waveAsteroidSpeed);
                     mediumAsteroid->SetPosition(asteroid.GetPosition());
                     m_asteroids.push_back(mediumAsteroid);
                 }
@@ -255,7 +257,7 @@ namespace asteroids
             case AsteroidSize::MEDIUM:
                 for(int i = 0; i < numAsteroids; ++i)
                 {
-                    Asteroid* smallAsteroid = m_asteroidFactory.CreateSmallAsteroid();
+                    Asteroid* smallAsteroid = m_asteroidFactory.CreateSmallAsteroid(m_waveAsteroidSpeed);
                     smallAsteroid->SetPosition(asteroid.GetPosition());
                     m_asteroids.push_back(smallAsteroid);
                 }
@@ -328,13 +330,13 @@ namespace asteroids
         }
     }
 
-    void World::CreateAsteroids(AsteroidSize size, int numAsteroids)
+    void World::CreateAsteroids(int n, AsteroidSize size, int speed)
     {
         float w = m_width;
         float h = m_height;
         float x[] = {0, w, 0, w};
         float y[] = {0, 0, h, h};
-        for(int i = 0, j = 0; i < numAsteroids; ++i, ++j)
+        for(int i = 0, j = 0; i < n; ++i, ++j)
         {
             Asteroid* asteroid = m_asteroidFactory.Create(size);
             asteroid->SetPosition(Vector2(x[j], y[j]));
@@ -434,5 +436,22 @@ namespace asteroids
             }
         }
         m_bullets.clear();
+    }
+
+    void World::CreateAsteroidsWave()
+    {
+        if(m_startNextWave)
+        {
+            int numAsteroids = m_waveId * 2;
+            m_waveAsteroidSpeed = std::min(m_waveId, WORLD_ASTEROID_MAX_SPEED);
+            CreateAsteroids(numAsteroids, AsteroidSize::BIG, m_waveAsteroidSpeed);
+            m_startNextWave = false;
+            m_waveId++;
+        }
+        std::cout << m_asteroids.size() << std::endl;
+        if(m_asteroids.size() == 0)
+        {
+            m_startNextWave = true;
+        }
     }
 }

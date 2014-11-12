@@ -15,9 +15,6 @@ namespace asteroids {
 
     typedef std::list<Asteroid*> AsteroidList;
     typedef std::list<Bullet*> BulletList;
-    typedef std::chrono::high_resolution_clock Clock;
-    typedef std::chrono::high_resolution_clock::time_point Time;
-    typedef std::chrono::milliseconds Duration;
 
     enum GameState
     {
@@ -49,7 +46,8 @@ namespace asteroids {
             // Asteroids
             void RenderAsteroids();
             void UpdateAsteroids();
-            void CreateAsteroids(AsteroidSize size, int numAsteroids);
+            void CreateAsteroids(int n, AsteroidSize size, int speed);
+            void CreateAsteroidsWave();
             void CreateAsteroidDebris(const Asteroid &asteroid);
             void DeleteAllAsteroids();
 
@@ -84,12 +82,11 @@ namespace asteroids {
             AsteroidFactory m_asteroidFactory;
             AsteroidList m_asteroids;
             BulletList m_bullets;
+            int m_waveId;
+            int m_waveAsteroidSpeed;
+            bool m_startNextWave;
             float m_width;
             float m_height;
-            Time m_prevTime;
-            Time m_curTime;
-            Time m_startTime;
-            unsigned long m_accTime;
     };
 }
 
