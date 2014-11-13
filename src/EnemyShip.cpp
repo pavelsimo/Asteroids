@@ -8,6 +8,7 @@ namespace asteroids
     const int ENEMYSHIP_SHOOT_TIMEOUT = 200;
     const int ENEMYSHIP_BULLET_SPEED = 3;
     const int ENEMYSHIP_BULLET_LIFESPAN = 100;
+    const int ENEMYSHIP_RADIUS = 40;
 
     EnemyShip::EnemyShip()
     {
@@ -96,13 +97,14 @@ namespace asteroids
     void EnemyShip::Shoot(World &world)
     {
         Bullet *bullet = new Bullet(ENEMYSHIP_BULLET_LIFESPAN);
-        Vector2 bulletDirection = world.GetPlayer().GetPosition() - m_position;
+        Vector2 playerPosition = world.GetPlayer().GetPosition();
+        Vector2 bulletDirection = playerPosition - m_position;
         bulletDirection.Normalize();
 
         // Set bullet position
         Vector2 bulletPos = m_position;
-        bulletPos.x += bulletDirection.x * 16.0f;
-        bulletPos.y += bulletDirection.y * 16.0f;
+        bulletPos.x += bulletDirection.x * ENEMYSHIP_RADIUS;
+        bulletPos.y += bulletDirection.y * ENEMYSHIP_RADIUS;
         bullet->SetPosition(bulletPos);
 
         // Set bullet velocity

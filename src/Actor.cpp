@@ -1,6 +1,5 @@
 #include <iostream>
 #include "Actor.h"
-#include "Drawing.h"
 #include "World.h"
 
 namespace asteroids

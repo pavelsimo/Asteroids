@@ -80,7 +80,7 @@ namespace asteroids
                 UpdateBullets();
                 DeleteFarAwayBullets();
                 ResolveAsteroidBulletCollisions();
-                //ResolveEnemyShipBulletCollisions();
+                ResolveEnemyShipBulletCollisions();
                 m_playerRespawnWait = std::max(0, m_playerRespawnWait - 1);
                 break;
             case GameState::PLAYING:
@@ -92,7 +92,7 @@ namespace asteroids
                 ResolveAsteroidBulletCollisions();
                 ResolvePlayerAsteroidCollisions();
                 ResolvePlayerBulletCollisions();
-                //ResolveEnemyShipBulletCollisions();
+                ResolveEnemyShipBulletCollisions();
                 break;
         }
     }
@@ -297,13 +297,18 @@ namespace asteroids
 
     void World::ResolveEnemyShipBulletCollisions()
     {
-        for(auto i = m_bullets.begin(); i != m_bullets.end(); i++)
+        if(m_enemyShip != nullptr)
         {
-            Bullet* bullet = *i;
-            if(m_enemyShip->IsColliding(*bullet))
+            for(auto i = m_bullets.begin(); i != m_bullets.end(); i++)
             {
-                DeleteEnemyShip();
-                break;
+                Bullet* bullet = *i;
+                if(m_enemyShip->IsColliding(*bullet))
+                {
+                    DeleteEnemyShip();
+                    m_bullets.erase(i);
+                    delete bullet;
+                    break;
+                }
             }
         }
     }
@@ -448,7 +453,7 @@ namespace asteroids
             m_startNextWave = false;
             m_waveId++;
         }
-        std::cout << m_asteroids.size() << std::endl;
+
         if(m_asteroids.size() == 0)
         {
             m_startNextWave = true;
