@@ -146,7 +146,7 @@ namespace asteroids
         m_state |= (1 << bit);
     }
 
-    void Player::ClearState(int bit)
+    void Player::RemoveState(int bit)
     {
         m_state &= ~(1 << bit);
     }

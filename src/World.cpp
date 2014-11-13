@@ -16,6 +16,7 @@ namespace asteroids
         m_height = height;
         m_state = GameState::PLAYING;
         m_playerRespawnWait = WORLD_PLAYER_RESPAWN_WAIT;
+        m_enemyShipRespawnWait = WORLD_ENEMYSHIP_RESPAWN_WAIT;
         m_startNextWave = true;
         m_waveId = 1;
         m_waveAsteroidSpeed = 1;
@@ -25,8 +26,8 @@ namespace asteroids
         m_player->SetPosition(Vector2(width * 0.5f, height * 0.5f));
 
         // Enemy ship
-        m_enemyShip = new EnemyShip();
-        m_enemyShip->SetPosition(Vector2(0, height * 0.5f));
+        //m_enemyShip = new EnemyShip();
+        //m_enemyShip->SetPosition(Vector2(0, Random<int>(0, height)));
 
         // Random Seed
         srand(time(NULL));
@@ -79,6 +80,7 @@ namespace asteroids
                 UpdateAsteroids();
                 UpdateBullets();
                 DeleteFarAwayBullets();
+                RespawnEnemyShip();
                 ResolveAsteroidBulletCollisions();
                 ResolveEnemyShipBulletCollisions();
                 m_playerRespawnWait = std::max(0, m_playerRespawnWait - 1);
@@ -89,6 +91,7 @@ namespace asteroids
                 UpdateAsteroids();
                 UpdateBullets();
                 DeleteFarAwayBullets();
+                RespawnEnemyShip();
                 ResolveAsteroidBulletCollisions();
                 ResolvePlayerAsteroidCollisions();
                 ResolvePlayerBulletCollisions();
@@ -129,22 +132,22 @@ namespace asteroids
         {
             case 'w':
             case 'W':
-                m_player->ClearState(PlayerState::MOVING_FORWARD);
+                m_player->RemoveState(PlayerState::MOVING_FORWARD);
                 break;
             case 's':
             case 'S':
-                m_player->ClearState(PlayerState::MOVING_BACKWARD);
+                m_player->RemoveState(PlayerState::MOVING_BACKWARD);
                 break;
             case 'a':
             case 'A':
-                m_player->ClearState(PlayerState::ROTATING_CCW);
+                m_player->RemoveState(PlayerState::ROTATING_CCW);
                 break;
             case 'd':
             case 'D':
-                m_player->ClearState(PlayerState::ROTATING_CW);
+                m_player->RemoveState(PlayerState::ROTATING_CW);
                 break;
             case ' ':
-                m_player->ClearState(PlayerState::SHOOTING);
+                m_player->RemoveState(PlayerState::SHOOTING);
             break;
         }
     }
@@ -385,6 +388,22 @@ namespace asteroids
         }
     }
 
+
+    void World::RespawnEnemyShip()
+    {
+        if(m_enemyShip == nullptr)
+        {
+            if(!m_enemyShipRespawnWait)
+            {
+                m_enemyShip = new EnemyShip();
+                m_enemyShip->SetPosition(Vector2(0, Random<int>(0, m_height)));
+            }
+            m_enemyShipRespawnWait = std::max(0, m_enemyShipRespawnWait - 1);
+        } else {
+            m_enemyShipRespawnWait = WORLD_ENEMYSHIP_RESPAWN_WAIT;
+        }
+    }
+
     void World::UpdatePlayer()
     {
         if(m_player != nullptr)
@@ -454,7 +473,7 @@ namespace asteroids
             m_waveId++;
         }
 
-        if(m_asteroids.size() == 0)
+        if(m_asteroids.empty())
         {
             m_startNextWave = true;
         }

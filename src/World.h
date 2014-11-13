@@ -61,6 +61,7 @@ namespace asteroids {
             void UpdateEnemyShip();
             void RenderEnemyShip();
             void DeleteEnemyShip();
+            void RespawnEnemyShip();
 
             // Player
             void UpdatePlayer();
@@ -76,7 +77,6 @@ namespace asteroids {
             void ResolveEnemyShipBulletCollisions();
 
             GameState m_state;
-            int m_playerRespawnWait;
             Player *m_player;
             EnemyShip *m_enemyShip;
             AsteroidFactory m_asteroidFactory;
@@ -87,6 +87,8 @@ namespace asteroids {
             bool m_startNextWave;
             float m_width;
             float m_height;
+            int m_playerRespawnWait;
+            int m_enemyShipRespawnWait;
     };
 }
 

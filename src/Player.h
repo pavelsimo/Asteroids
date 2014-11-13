@@ -31,7 +31,7 @@ namespace asteroids
             virtual void OnUpdate(World &world) override;
             virtual void OnRender() override;
             void AddState(int bit);
-            void ClearState(int bit);
+            void RemoveState(int bit);
             bool IsIdle();
             bool IsMoving() const;
             bool IsMovingForward() const;
