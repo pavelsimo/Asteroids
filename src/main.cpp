@@ -2,7 +2,6 @@
 #include "LOpenGL.h"
 #include "LDevIL.h"
 #include "World.h"
-#include "BitmapFont.h"
 
 // constants
 const int SCREEN_WIDTH = 1136;
@@ -54,6 +53,11 @@ bool InitializeGL()
         printf( "Error initializing DevIL! %s\n", iluErrorString( ilError ) );
         return false;
     }
+
+    // enable blend
+    glEnable (GL_BLEND);
+    glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glDisable(GL_ALPHA_TEST);
 
     return true;
 }

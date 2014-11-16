@@ -67,7 +67,8 @@ namespace asteroids
     void World::Render()
     {
 
-        DrawText(m_width * 0.5f, m_height * 0.5f, "Asteroids", m_bitmapFont);
+        DrawText(m_width * 0.5f - 200, m_height * 0.5f, "Will you marry me xiong!", m_bitmapFont);
+
 
         switch (m_state)
         {

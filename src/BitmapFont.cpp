@@ -53,19 +53,6 @@ bool BitmapFont::LoadGlyphsFromXML(const std::string& filename)
             ParseGlyphOffset(offset, bitmapFontGlyph.xOffset, bitmapFontGlyph.yOffset);
 
             AddGlyph(code[0], bitmapFontGlyph);
-
-            // DEBUG
-            std::cout << bitmapFontGlyph.x << std::endl;
-            std::cout << bitmapFontGlyph.y << std::endl;
-            std::cout << bitmapFontGlyph.width << std::endl;
-            std::cout << bitmapFontGlyph.height << std::endl;
-            std::cout << bitmapFontGlyph.xOffset << std::endl;
-            std::cout << bitmapFontGlyph.yOffset << std::endl;
-            // END DEBUG
-
-            std::cout << "code=" << code[0] << std::endl;
-            std::cout << "offset=" << offset << std::endl;
-            std::cout << "width=" << width << std::endl;
         }
     }
     catch (const xml_schema::exception& e)

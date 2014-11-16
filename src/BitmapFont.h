@@ -6,8 +6,7 @@
 #include <string>
 
 #include "Texture.h"
-#include "vector_battle_regular_20.hxx"
-
+#include "BitmapFontXMLParser.hxx"
 
 struct BitmapFontGlyph
 {
