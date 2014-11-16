@@ -4,11 +4,32 @@
 
 #include "LOpenGL.h"
 #include "Vector2.h"
+#include "BitmapFont.h"
 
 enum LineType {
     SOLID,
     DOTTED = 0x0101,
     DASHED = 0x00FF
+};
+
+struct Rect
+{
+    Rect()
+    : x(0), y(0), w(0), h(0)
+    {
+
+    }
+
+    Rect(GLfloat _x, GLfloat _y, GLfloat _w, GLfloat _h)
+    : x(_x), y(_y), w(_w), h(_h)
+    {
+
+    }
+
+    GLfloat x;
+    GLfloat y;
+    GLfloat w;
+    GLfloat h;
 };
 
 void DrawLine(
@@ -43,6 +64,23 @@ void DrawCircle(
     GLfloat radius = 5,
     GLfloat sides = 20,
     GLfloat lineWidth = 1.f
+);
+
+void DrawTexture(
+        GLfloat x, GLfloat y,
+        GLuint texId,
+        GLuint imgWidth, GLuint imgHeight,
+        GLuint texWidth, GLuint texHeight,
+        Rect* clip = NULL
+);
+
+void DrawText(
+        GLfloat x, GLfloat y,
+        const std::string &text,
+        BitmapFont* font,
+        GLfloat glyphOffset = 3,
+        GLfloat spaceOffset = 32,
+        GLfloat lineSeparatorOffset = 100
 );
 
 #endif // __DRAWING_H_

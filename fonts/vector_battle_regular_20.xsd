@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+  <xs:element name="Font">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element maxOccurs="unbounded" ref="Char"/>
+      </xs:sequence>
+      <xs:attribute name="family" use="required" type="xs:string"/>
+      <xs:attribute name="height" use="required" type="xs:integer"/>
+      <xs:attribute name="size" use="required" type="xs:integer"/>
+      <xs:attribute name="style" use="required" type="xs:string"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="Char">
+    <xs:complexType>
+      <xs:attribute name="code" use="required" type="xs:string"/>
+      <xs:attribute name="offset" use="required" type="xs:string"/>
+      <xs:attribute name="rect" use="required" type="xs:string"/>
+      <xs:attribute name="width" use="required" type="xs:integer"/>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

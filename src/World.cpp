@@ -17,17 +17,18 @@ namespace asteroids
         m_state = GameState::PLAYING;
         m_playerRespawnWait = WORLD_PLAYER_RESPAWN_WAIT;
         m_enemyShipRespawnWait = WORLD_ENEMYSHIP_RESPAWN_WAIT;
-        m_startNextWave = true;
+
+        // Resources
+        m_bitmapFont = nullptr;
+
+        // Wave
         m_waveId = 1;
         m_waveAsteroidSpeed = 1;
+        m_canStartNextWave = true;
 
         // Player
         m_player = new Player();
         m_player->SetPosition(Vector2(width * 0.5f, height * 0.5f));
-
-        // Enemy ship
-        //m_enemyShip = new EnemyShip();
-        //m_enemyShip->SetPosition(Vector2(0, Random<int>(0, height)));
 
         // Random Seed
         srand(time(NULL));
@@ -39,10 +40,35 @@ namespace asteroids
         DeleteEnemyShip();
         DeleteAllBullets();
         DeleteAllAsteroids();
+        DeleteResources();
+    }
+
+    bool World::LoadResources()
+    {
+        if(m_bitmapFont == nullptr)
+        {
+            m_bitmapFont = new BitmapFont();
+            m_bitmapFont->LoadBitmap("/home/pavelsimo/workspace/Games_Cpp/Asteroids/fonts/vector_battle_regular_20.png");
+            m_bitmapFont->LoadGlyphsFromXML("/home/pavelsimo/workspace/Games_Cpp/Asteroids/fonts/vector_battle_regular_20.xml");
+            return true;
+        }
+        return false;
+    }
+
+    void World::DeleteResources()
+    {
+        if(m_bitmapFont != nullptr)
+        {
+            delete m_bitmapFont;
+            m_bitmapFont = nullptr;
+        }
     }
 
     void World::Render()
     {
+
+        DrawText(m_width * 0.5f, m_height * 0.5f, "Asteroids", m_bitmapFont);
+
         switch (m_state)
         {
             case GameState::RESPAWN:
@@ -318,7 +344,6 @@ namespace asteroids
 
     void World::ResolveAsteroidBulletCollisions()
     {
-        // Bullets and asteroids collisions
         for(auto i = m_bullets.begin(); i != m_bullets.end(); i++)
         {
             Bullet* bullet = *i;
@@ -464,18 +489,18 @@ namespace asteroids
 
     void World::CreateAsteroidsWave()
     {
-        if(m_startNextWave)
+        if(m_canStartNextWave)
         {
             int numAsteroids = m_waveId * 2;
             m_waveAsteroidSpeed = std::min(m_waveId, WORLD_ASTEROID_MAX_SPEED);
             CreateAsteroids(numAsteroids, AsteroidSize::BIG, m_waveAsteroidSpeed);
-            m_startNextWave = false;
+            m_canStartNextWave = false;
             m_waveId++;
         }
 
         if(m_asteroids.empty())
         {
-            m_startNextWave = true;
+            m_canStartNextWave = true;
         }
     }
 }

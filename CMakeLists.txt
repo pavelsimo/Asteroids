@@ -1,6 +1,9 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8.4)
 PROJECT(Asteroids)
 
+# Modules
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
+
 # GLUT
 FIND_PACKAGE(GLUT REQUIRED)
 INCLUDE_DIRECTORIES(${GLUT_INCLUDE_DIRS})
@@ -24,6 +27,12 @@ FIND_PACKAGE(DevIL REQUIRED)
 IF(NOT IL_FOUND)
     MESSAGE(ERROR " DevIL not found!")
 ENDIF(NOT IL_FOUND)
+
+# Xerces-C
+FIND_PACKAGE(XercesC REQUIRED)
+IF(NOT XERCESC_FOUND)
+    MESSAGE(ERROR " Xerces-C not found!")
+ENDIF(NOT XERCESC_FOUND)
 
 # C++11
 INCLUDE(CheckCXXCompilerFlag)
@@ -51,6 +60,9 @@ ADD_EXECUTABLE(
     src/Asteroid.cpp
     src/AsteroidFactory.cpp
     src/EnemyShip.cpp
+    src/BitmapFont.cpp
+    src/Texture.cpp
+    src/vector_battle_regular_20.cxx
 )
 
 TARGET_LINK_LIBRARIES(
@@ -60,4 +72,5 @@ TARGET_LINK_LIBRARIES(
     ${IL_LIBRARIES}
     ${ILU_LIBRARIES}
     ${ILUT_LIBRARIES}
+    ${XERCESC_LIBRARY}
 )

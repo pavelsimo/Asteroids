@@ -2,7 +2,6 @@
 #define __WORLD_H_
 
 #include <list>
-#include <chrono>
 
 #include "Drawing.h"
 #include "Player.h"
@@ -22,10 +21,19 @@ namespace asteroids {
         RESPAWN
     };
 
+    struct AsteroidWave
+    {
+        int waveId;
+        int asteroidSpeed;
+        bool canStartNextWave;
+    };
+
     class World {
         public:
             World(const float width, const float height);
             ~World();
+
+            bool LoadResources();
 
             void Render();
             void Update();
@@ -43,6 +51,8 @@ namespace asteroids {
             const Player& GetPlayer() const;
 
         private:
+            void DeleteResources();
+
             // Asteroids
             void RenderAsteroids();
             void UpdateAsteroids();
@@ -79,12 +89,13 @@ namespace asteroids {
             GameState m_state;
             Player *m_player;
             EnemyShip *m_enemyShip;
+            BitmapFont *m_bitmapFont;
             AsteroidFactory m_asteroidFactory;
             AsteroidList m_asteroids;
             BulletList m_bullets;
             int m_waveId;
             int m_waveAsteroidSpeed;
-            bool m_startNextWave;
+            bool m_canStartNextWave;
             float m_width;
             float m_height;
             int m_playerRespawnWait;

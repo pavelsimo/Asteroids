@@ -2,6 +2,7 @@
 #include "LOpenGL.h"
 #include "LDevIL.h"
 #include "World.h"
+#include "BitmapFont.h"
 
 // constants
 const int SCREEN_WIDTH = 1136;
@@ -112,6 +113,12 @@ int main(int argc, char** argv)
     if(!InitializeGL())
     {
         std::cout << "Unable to initalize OpenGL." << std::endl;
+    }
+
+    if(!g_world->LoadResources())
+    {
+        // TODO: (Pavel) Clean up the world and end
+        std::cout << "Unable to load the game resources." << std::endl;
     }
 
     glutDisplayFunc(Render);
