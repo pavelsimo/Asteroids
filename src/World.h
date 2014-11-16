@@ -10,7 +10,10 @@
 #include "AsteroidFactory.h"
 #include "Asteroid.h"
 
-namespace asteroids {
+// TODO: (Pavel) Add Sound Manager Class, http://www.ogre3d.org/tikiwiki/tiki-index.php?page=OpenAl+Soundmanager
+
+namespace asteroids
+{
 
     typedef std::list<Asteroid*> AsteroidList;
     typedef std::list<Bullet*> BulletList;
@@ -77,6 +80,7 @@ namespace asteroids {
             // Player
             void UpdatePlayer();
             void RenderPlayer();
+            void RenderPlayerScore();
             void DeletePlayer();
             void CreatePlayerDebris();
             void RespawnPlayer();

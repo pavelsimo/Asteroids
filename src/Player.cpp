@@ -12,6 +12,7 @@ namespace asteroids
     const float PLAYER_DRAG = 0.999;
 
     Player::Player()
+    : m_score(0)
     {
         InitializeGeometry();
         Initialize();
@@ -187,5 +188,15 @@ namespace asteroids
     bool Player::IsRotatingCCW() const
     {
         return TestBit(m_state, PlayerState::ROTATING_CCW);
+    }
+
+    void Player::AddScore(unsigned int score)
+    {
+        m_score += score;
+    }
+
+    unsigned int Player::GetScore()
+    {
+        return m_score;
     }
 }

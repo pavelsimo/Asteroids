@@ -79,7 +79,7 @@ void BitmapFont::AddGlyph(unsigned int glyph,
     AddGlyph(glyph, bitmapFontGlyph);
 }
 
-void BitmapFont::AddGlyph(unsigned int glyph, BitmapFontGlyph bitmapFontGlyph)
+void BitmapFont::AddGlyph(unsigned int glyph, const BitmapFontGlyph& bitmapFontGlyph)
 {
     m_glyphs[glyph] = bitmapFontGlyph;
 }

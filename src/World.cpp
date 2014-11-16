@@ -1,7 +1,10 @@
 #include <iostream>
 #include <algorithm>
+#include <string>
 
 #include "World.h"
+
+
 
 namespace asteroids
 {
@@ -66,13 +69,21 @@ namespace asteroids
 
     void World::Render()
     {
+        std::string banner = "Asteroid";
+
         switch (m_state)
         {
             case GameState::MENU:
-                DrawText(m_width * 0.5f, m_height * 0.5f, "Asteroid", m_bitmapFont);
+                DrawText(
+                    m_width * 0.5f - 55*3,
+                    m_height * 0.5f - 55,
+                    banner,
+                    m_bitmapFont
+                );
                 break;
             case GameState::RESPAWN:
                 // BLINK
+                RenderPlayerScore();
                 if(m_playerRespawnWait % WORLD_BLINK_RATE == 0)
                 {
                     RenderPlayer();
@@ -82,6 +93,7 @@ namespace asteroids
                 RenderBullets();
                 break;
             case GameState::PLAYING:
+                RenderPlayerScore();
                 RenderPlayer();
                 RenderEnemyShip();
                 RenderAsteroids();
@@ -339,6 +351,8 @@ namespace asteroids
                     DeleteEnemyShip();
                     m_bullets.erase(i);
                     delete bullet;
+                    // TODO: (Pavel) This should be a constant
+                    m_player->AddScore(100);
                     break;
                 }
             }
@@ -360,6 +374,9 @@ namespace asteroids
                     m_asteroids.erase(j);
                     delete asteroid;
                     delete bullet;
+
+                    // TODO: (Pavel) Assign score according to the asteroid size
+                    m_player->AddScore(20);
                     break;
                 }
             }
@@ -505,5 +522,11 @@ namespace asteroids
         {
             m_canStartNextWave = true;
         }
+    }
+
+    void World::RenderPlayerScore()
+    {
+        int score = m_player->GetScore();
+        DrawText(20, 20, std::to_string(score), m_bitmapFont);
     }
 }

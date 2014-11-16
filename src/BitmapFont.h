@@ -18,6 +18,9 @@ struct BitmapFontGlyph
     float yOffset;
 };
 
+// TODO: (Pavel) Change to <unsigned int, BitmapFontGlyph*>
+typedef std::map<unsigned int, BitmapFontGlyph> GlyphMap;
+
 class BitmapFont
 {
     public:
@@ -30,7 +33,7 @@ class BitmapFont
         //
         virtual bool LoadBitmap(const std::string& filename);
         virtual bool LoadGlyphsFromXML(const std::string& filename);
-        void AddGlyph(unsigned int glyph, BitmapFontGlyph bitmapFontGlyph);
+        void AddGlyph(unsigned int glyph, const BitmapFontGlyph& bitmapFontGlyph);
         void AddGlyph(unsigned int glyph, float x, float y, float w, float h,
             float xOffset, float yOffset
         );
@@ -58,7 +61,7 @@ class BitmapFont
         std::string m_family;
         std::string m_style;
         Texture* m_texture;
-        std::map<unsigned int, BitmapFontGlyph> m_glyphs;
+        GlyphMap m_glyphs;
 
         void ParseGlyphRect(const std::string& str, float &x, float &y, float &width, float &height);
         void ParseGlyphOffset(const std::string &str, float &xOffset, float &yOffset);

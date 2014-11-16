@@ -39,6 +39,8 @@ namespace asteroids
             bool IsRotatingCW() const;
             bool IsRotatingCCW() const;
             bool IsShooting() const;
+            void AddScore(unsigned int score);
+            unsigned int GetScore();
 
         private:
             void Shoot(World &world);
@@ -50,6 +52,7 @@ namespace asteroids
             void Rotate(float angle);
             bool TestBit(int mask, int bit) const;
 
+            unsigned int m_score;
             int m_state;
             float m_angle;
             Vector2 m_upright;
