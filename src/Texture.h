@@ -1,5 +1,5 @@
-#ifndef TEXTURE_H
-#define TEXTURE_H
+#ifndef __TEXTURE_H_
+#define __TEXTURE_H_
 
 #include "LOpenGL.h"
 #include <IL/il.h>
@@ -35,4 +35,4 @@ class Texture
         GLuint m_imgHeight;
 };
 
-#endif
+#endif // __TEXTURE_H_

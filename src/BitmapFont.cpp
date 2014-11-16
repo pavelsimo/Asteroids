@@ -14,7 +14,6 @@ BitmapFont::~BitmapFont()
 bool BitmapFont::LoadBitmap(const std::string& filename)
 {
     Clean();
-
     if(m_texture == nullptr)
     {
         m_texture = new Texture();
@@ -22,7 +21,6 @@ bool BitmapFont::LoadBitmap(const std::string& filename)
             return true;
         }
     }
-
     return false;
 }
 
@@ -166,4 +164,44 @@ void BitmapFont::ParseGlyphOffset(const std::string &str, float &xOffset, float 
 
     ss >> token;
     yOffset = std::stof(token);
+}
+
+int BitmapFont::GetSize() const
+{
+    return m_size;
+}
+
+void BitmapFont::SetSize(int size)
+{
+    m_size = size;
+}
+
+void BitmapFont::SetHeight(int height)
+{
+    m_height = height;
+}
+
+int BitmapFont::GetHeight() const
+{
+    return m_height;
+}
+
+void BitmapFont::SetFamily(const std::string& family)
+{
+    m_family = family;
+}
+
+const std::string BitmapFont::GetFamily() const
+{
+    return m_family;
+}
+
+void BitmapFont::SetStyle(const std::string& style)
+{
+    m_style = style;
+}
+
+const std::string BitmapFont::GetStyle() const
+{
+    return m_style;
 }
