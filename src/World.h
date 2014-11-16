@@ -17,6 +17,7 @@ namespace asteroids {
 
     enum GameState
     {
+        MENU,
         PLAYING,
         RESPAWN
     };

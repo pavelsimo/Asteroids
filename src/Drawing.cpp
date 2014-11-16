@@ -193,7 +193,6 @@ void DrawText(
         }
 
         BitmapFontGlyph glyph = font->GetGlyph(text[i]);
-        std::cout << glyph.x << " " << glyph.y << std::endl;
         Rect clip;
         clip.x = glyph.x;
         clip.y = glyph.y;

@@ -62,7 +62,7 @@ ADD_EXECUTABLE(
     src/EnemyShip.cpp
     src/BitmapFont.cpp
     src/Texture.cpp
-    src/vector_battle_regular_20.cxx
+    src/BitmapFontXMLParser.cxx
 )
 
 TARGET_LINK_LIBRARIES(

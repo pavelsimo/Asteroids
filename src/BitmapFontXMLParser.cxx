@@ -38,7 +38,7 @@
 
 #include <xsd/cxx/pre.hxx>
 
-#include "FontParser.hxx"
+#include "BitmapFontXMLParser.hxx"
 
 // Font
 // 

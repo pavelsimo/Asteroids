@@ -14,7 +14,7 @@ namespace asteroids
     {
         m_width = width;
         m_height = height;
-        m_state = GameState::PLAYING;
+        m_state = GameState::MENU;
         m_playerRespawnWait = WORLD_PLAYER_RESPAWN_WAIT;
         m_enemyShipRespawnWait = WORLD_ENEMYSHIP_RESPAWN_WAIT;
 
@@ -48,8 +48,8 @@ namespace asteroids
         if(m_bitmapFont == nullptr)
         {
             m_bitmapFont = new BitmapFont();
-            m_bitmapFont->LoadBitmap("/home/pavelsimo/workspace/Games_Cpp/Asteroids/fonts/vector_battle_regular_20.png");
-            m_bitmapFont->LoadGlyphsFromXML("/home/pavelsimo/workspace/Games_Cpp/Asteroids/fonts/vector_battle_regular_20.xml");
+            m_bitmapFont->LoadBitmap("/home/pavelsimo/workspace/Games_Cpp/Asteroids/fonts/hyperspace_bold_65.png");
+            m_bitmapFont->LoadGlyphsFromXML("/home/pavelsimo/workspace/Games_Cpp/Asteroids/fonts/hyperspace_bold_65.xml");
             return true;
         }
         return false;
@@ -66,12 +66,11 @@ namespace asteroids
 
     void World::Render()
     {
-
-        DrawText(m_width * 0.5f - 200, m_height * 0.5f, "Will you marry me xiong!", m_bitmapFont);
-
-
         switch (m_state)
         {
+            case GameState::MENU:
+                DrawText(m_width * 0.5f, m_height * 0.5f, "Asteroid", m_bitmapFont);
+                break;
             case GameState::RESPAWN:
                 // BLINK
                 if(m_playerRespawnWait % WORLD_BLINK_RATE == 0)
@@ -186,7 +185,10 @@ namespace asteroids
 
     void World::OnMouseClick(int button, int state, int x, int y)
     {
-
+        if(m_state == GameState::MENU)
+        {
+            m_state = GameState::PLAYING;
+        }
     }
 
     float World::GetWidth() const
