@@ -20,6 +20,7 @@ namespace asteroids
         m_state = GameState::MENU;
         m_playerRespawnWait = WORLD_PLAYER_RESPAWN_WAIT;
         m_enemyShipRespawnWait = WORLD_ENEMYSHIP_RESPAWN_WAIT;
+        m_soundManager = nullptr;
 
         // Resources
         m_bitmapFont = nullptr;
@@ -44,6 +45,10 @@ namespace asteroids
         DeleteAllBullets();
         DeleteAllAsteroids();
         DeleteResources();
+        if(m_soundManager != nullptr)
+        {
+            delete m_soundManager;
+        }
     }
 
     bool World::LoadResources()
@@ -53,9 +58,27 @@ namespace asteroids
             m_bitmapFont = new BitmapFont();
             m_bitmapFont->LoadBitmap("/home/pavelsimo/workspace/Games_Cpp/Asteroids/fonts/hyperspace_bold_65.png");
             m_bitmapFont->LoadGlyphsFromXML("/home/pavelsimo/workspace/Games_Cpp/Asteroids/fonts/hyperspace_bold_65.xml");
-            return true;
         }
-        return false;
+        if(m_soundManager == nullptr)
+        {
+            m_soundManager = SoundManager::Instance();
+            m_soundManager->Initialize();
+
+            // Fire audio
+            m_soundManager->LoadAudio(
+                "/home/pavelsimo/workspace/Games_Cpp/Asteroids/sounds/fire.wav",
+                &m_soundShoot,
+                false
+            );
+
+            // Thrust audio
+            m_soundManager->LoadAudio(
+                    "/home/pavelsimo/workspace/Games_Cpp/Asteroids/sounds/thrust.wav",
+                    &m_soundThrust,
+                    false
+            );
+        }
+        return true;
     }
 
     void World::DeleteResources()
@@ -140,11 +163,13 @@ namespace asteroids
 
     void World::OnKeyDown(unsigned char key)
     {
+        // FIXME: (Pavel) this should be inside the GameStates
         switch(key)
         {
             case 'w':
             case 'W':
                 m_player->AddState(PlayerState::MOVING_FORWARD);
+                m_soundManager->Play(m_soundThrust, true);
             break;
             case 's':
             case 'S':
@@ -160,6 +185,7 @@ namespace asteroids
             break;
             case ' ':
                 m_player->AddState(PlayerState::SHOOTING);
+                m_soundManager->Play(m_soundShoot, true);
             break;
         }
     }

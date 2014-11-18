@@ -1,6 +1,7 @@
 #include <iostream>
 #include "LOpenGL.h"
 #include "LDevIL.h"
+#include "LOpenAL.h"
 #include "World.h"
 
 // constants
@@ -114,10 +115,15 @@ int main(int argc, char** argv)
     glutSetOption(GLUT_ACTION_ON_WINDOW_CLOSE,
             GLUT_ACTION_CONTINUE_EXECUTION);
 
+
+
     if(!InitializeGL())
     {
         std::cout << "Unable to initalize OpenGL." << std::endl;
     }
+
+    // initialize alut
+    alutInit (&argc, argv);
 
     if(!g_world->LoadResources())
     {
@@ -132,6 +138,9 @@ int main(int argc, char** argv)
     glutMouseFunc(OnMouseClick);
     glutTimerFunc(1000 / SCREEN_FPS, GameLoop, 0);
     glutMainLoop();
+
+    // exit alut
+    alutExit();
 
     if(g_world != nullptr)
     {

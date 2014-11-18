@@ -9,6 +9,7 @@
 #include "Bullet.h"
 #include "AsteroidFactory.h"
 #include "Asteroid.h"
+#include "SoundManager.h"
 
 // TODO: (Pavel) Add Sound Manager Class, http://www.ogre3d.org/tikiwiki/tiki-index.php?page=OpenAl+Soundmanager
 
@@ -91,10 +92,14 @@ namespace asteroids
             void ResolveAsteroidBulletCollisions();
             void ResolveEnemyShipBulletCollisions();
 
+            SoundManager* m_soundManager;
+            unsigned int m_soundShoot;
+            unsigned int m_soundThrust;
+
             GameState m_state;
-            Player *m_player;
-            EnemyShip *m_enemyShip;
-            BitmapFont *m_bitmapFont;
+            Player* m_player;
+            EnemyShip* m_enemyShip;
+            BitmapFont* m_bitmapFont;
             AsteroidFactory m_asteroidFactory;
             AsteroidList m_asteroids;
             BulletList m_bullets;
