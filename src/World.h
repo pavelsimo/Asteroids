@@ -28,9 +28,9 @@ namespace asteroids
 
     struct AsteroidWave
     {
-        int waveId;
-        int asteroidSpeed;
-        bool canStartNextWave;
+        int id;
+        int speed;
+        bool isDone;
     };
 
     class World {
@@ -59,6 +59,7 @@ namespace asteroids
             void DeleteResources();
 
             // Asteroids
+            //
             void RenderAsteroids();
             void UpdateAsteroids();
             void CreateAsteroids(int n, AsteroidSize size, int speed);
@@ -67,18 +68,21 @@ namespace asteroids
             void DeleteAllAsteroids();
 
             // Bullets
+            //
             void RenderBullets();
             void UpdateBullets();
             void DeleteFarAwayBullets();
             void DeleteAllBullets();
 
             // EnemyShip
+            //
             void UpdateEnemyShip();
             void RenderEnemyShip();
             void DeleteEnemyShip();
             void RespawnEnemyShip();
 
             // Player
+            //
             void UpdatePlayer();
             void RenderPlayer();
             void RenderPlayerScore();
@@ -87,14 +91,22 @@ namespace asteroids
             void RespawnPlayer();
 
             // Collisions
+            //
             void ResolvePlayerAsteroidCollisions();
             void ResolvePlayerBulletCollisions();
             void ResolveAsteroidBulletCollisions();
             void ResolveEnemyShipBulletCollisions();
 
+            // Sound
+            //
             SoundManager* m_soundManager;
             unsigned int m_soundShoot;
             unsigned int m_soundThrust;
+            unsigned int m_soundBangBig;
+
+            // Wave
+            //
+            AsteroidWave m_asteroidWave;
 
             GameState m_state;
             Player* m_player;
@@ -103,9 +115,7 @@ namespace asteroids
             AsteroidFactory m_asteroidFactory;
             AsteroidList m_asteroids;
             BulletList m_bullets;
-            int m_waveId;
-            int m_waveAsteroidSpeed;
-            bool m_canStartNextWave;
+
             float m_width;
             float m_height;
             int m_playerRespawnWait;

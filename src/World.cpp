@@ -4,14 +4,17 @@
 
 #include "World.h"
 
-
-
 namespace asteroids
 {
     const int WORLD_BLINK_RATE = 12;
     const int WORLD_ENEMYSHIP_RESPAWN_WAIT = 500;
     const int WORLD_PLAYER_RESPAWN_WAIT = 100;
     const int WORLD_ASTEROID_MAX_SPEED = 4;
+    const std::string WORLD_ASTEROID_FONT_BITMAP = "fonts/hyperspace_bold_65.png";
+    const std::string WORLD_ASTEROID_FONT_CONFIG = "fonts/hyperspace_bold_65.xml";
+    const std::string WORLD_SOUND_PLAYER_SHOOT = "sounds/fire.wav";
+    const std::string WORLD_SOUND_PLAYER_THRUST = "sounds/thrust.wav";
+    const std::string WORLD_SOUND_BIG_ASTEROID_BANG = "sounds/bangLarge.wav";
 
     World::World(const float width, const float height)
     {
@@ -20,17 +23,20 @@ namespace asteroids
         m_state = GameState::MENU;
         m_playerRespawnWait = WORLD_PLAYER_RESPAWN_WAIT;
         m_enemyShipRespawnWait = WORLD_ENEMYSHIP_RESPAWN_WAIT;
-        m_soundManager = nullptr;
 
         // Resources
+        //
         m_bitmapFont = nullptr;
+        m_soundManager = nullptr;
 
         // Wave
-        m_waveId = 1;
-        m_waveAsteroidSpeed = 1;
-        m_canStartNextWave = true;
+        //
+        m_asteroidWave.id = 1;
+        m_asteroidWave.speed = 1;
+        m_asteroidWave.isDone = true;
 
         // Player
+        //
         m_player = new Player();
         m_player->SetPosition(Vector2(width * 0.5f, height * 0.5f));
 
@@ -56,9 +62,10 @@ namespace asteroids
         if(m_bitmapFont == nullptr)
         {
             m_bitmapFont = new BitmapFont();
-            m_bitmapFont->LoadBitmap("/home/pavelsimo/workspace/Games_Cpp/Asteroids/fonts/hyperspace_bold_65.png");
-            m_bitmapFont->LoadGlyphsFromXML("/home/pavelsimo/workspace/Games_Cpp/Asteroids/fonts/hyperspace_bold_65.xml");
+            m_bitmapFont->LoadBitmap(WORLD_ASTEROID_FONT_BITMAP);
+            m_bitmapFont->LoadGlyphsFromXML(WORLD_ASTEROID_FONT_CONFIG);
         }
+
         if(m_soundManager == nullptr)
         {
             m_soundManager = SoundManager::Instance();
@@ -66,15 +73,22 @@ namespace asteroids
 
             // Fire audio
             m_soundManager->LoadAudio(
-                "/home/pavelsimo/workspace/Games_Cpp/Asteroids/sounds/fire.wav",
+                WORLD_SOUND_PLAYER_SHOOT,
                 &m_soundShoot,
                 false
             );
-
+            
             // Thrust audio
             m_soundManager->LoadAudio(
-                    "/home/pavelsimo/workspace/Games_Cpp/Asteroids/sounds/thrust.wav",
-                    &m_soundThrust,
+                WORLD_SOUND_PLAYER_THRUST,
+                &m_soundThrust,
+                true
+            );
+
+            // Asteroid explosion audio
+            m_soundManager->LoadAudio(
+                    WORLD_SOUND_BIG_ASTEROID_BANG,
+                    &m_soundBangBig,
                     false
             );
         }
@@ -192,11 +206,13 @@ namespace asteroids
 
     void World::OnKeyUp(unsigned char key)
     {
+        // FIXME: (Pavel) this should be inside the GameStates
         switch(key)
         {
             case 'w':
             case 'W':
                 m_player->RemoveState(PlayerState::MOVING_FORWARD);
+                m_soundManager->Stop(m_soundThrust);
                 break;
             case 's':
             case 'S':
@@ -317,9 +333,13 @@ namespace asteroids
         switch(size)
         {
             case AsteroidSize::BIG:
+
+                // Explosion sound
+                m_soundManager->Play(m_soundBangBig, true);
+
                 for(int i = 0; i < numAsteroids; ++i)
                 {
-                    Asteroid* mediumAsteroid = m_asteroidFactory.CreateMediumAsteroid(m_waveAsteroidSpeed);
+                    Asteroid* mediumAsteroid = m_asteroidFactory.CreateMediumAsteroid(m_asteroidWave.speed);
                     mediumAsteroid->SetPosition(asteroid.GetPosition());
                     m_asteroids.push_back(mediumAsteroid);
                 }
@@ -327,7 +347,7 @@ namespace asteroids
             case AsteroidSize::MEDIUM:
                 for(int i = 0; i < numAsteroids; ++i)
                 {
-                    Asteroid* smallAsteroid = m_asteroidFactory.CreateSmallAsteroid(m_waveAsteroidSpeed);
+                    Asteroid* smallAsteroid = m_asteroidFactory.CreateSmallAsteroid(m_asteroidWave.speed);
                     smallAsteroid->SetPosition(asteroid.GetPosition());
                     m_asteroids.push_back(smallAsteroid);
                 }
@@ -459,7 +479,6 @@ namespace asteroids
         }
     }
 
-
     void World::RespawnEnemyShip()
     {
         if(m_enemyShip == nullptr)
@@ -535,18 +554,18 @@ namespace asteroids
 
     void World::CreateAsteroidsWave()
     {
-        if(m_canStartNextWave)
+        if(m_asteroidWave.isDone)
         {
-            int numAsteroids = m_waveId * 2;
-            m_waveAsteroidSpeed = std::min(m_waveId, WORLD_ASTEROID_MAX_SPEED);
-            CreateAsteroids(numAsteroids, AsteroidSize::BIG, m_waveAsteroidSpeed);
-            m_canStartNextWave = false;
-            m_waveId++;
+            int numAsteroids = m_asteroidWave.id * 2;
+            m_asteroidWave.speed = std::min(m_asteroidWave.id, WORLD_ASTEROID_MAX_SPEED);
+            CreateAsteroids(numAsteroids, AsteroidSize::BIG, m_asteroidWave.speed);
+            m_asteroidWave.id++;
+            m_asteroidWave.isDone = false;
         }
 
         if(m_asteroids.empty())
         {
-            m_canStartNextWave = true;
+            m_asteroidWave.isDone = true;
         }
     }
 

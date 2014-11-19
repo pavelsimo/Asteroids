@@ -3,6 +3,7 @@
 #include "LDevIL.h"
 #include "LOpenAL.h"
 #include "World.h"
+#include "FileSystem.h"
 
 // constants
 const int SCREEN_WIDTH = 1136;
@@ -116,7 +117,6 @@ int main(int argc, char** argv)
             GLUT_ACTION_CONTINUE_EXECUTION);
 
 
-
     if(!InitializeGL())
     {
         std::cout << "Unable to initalize OpenGL." << std::endl;
@@ -124,6 +124,13 @@ int main(int argc, char** argv)
 
     // initialize alut
     alutInit (&argc, argv);
+
+
+    FileSystem* fs = FileSystem::Instance();
+
+    std::cout << fs->GetCurrentWorkingDir() << std::endl;
+
+    delete fs;
 
     if(!g_world->LoadResources())
     {
@@ -138,6 +145,7 @@ int main(int argc, char** argv)
     glutMouseFunc(OnMouseClick);
     glutTimerFunc(1000 / SCREEN_FPS, GameLoop, 0);
     glutMainLoop();
+
 
     // exit alut
     alutExit();
