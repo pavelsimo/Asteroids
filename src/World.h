@@ -11,8 +11,6 @@
 #include "Asteroid.h"
 #include "SoundManager.h"
 
-// TODO: (Pavel) Add Sound Manager Class, http://www.ogre3d.org/tikiwiki/tiki-index.php?page=OpenAl+Soundmanager
-
 namespace asteroids
 {
 
@@ -39,13 +37,16 @@ namespace asteroids
             ~World();
 
             bool LoadResources();
-
             void Render();
             void Update();
+
+            // Events
+            //
             void OnKeyDown(unsigned char key);
             void OnKeyUp(unsigned char key);
             void OnMouseMove(int x, int y);
             void OnMouseClick(int button, int state, int x, int y);
+
             float GetWidth() const;
             float GetHeight() const;
             float GetLeft() const;
@@ -54,9 +55,41 @@ namespace asteroids
             float GetTop() const;
             void AddBullet(Bullet* bullet);
             const Player& GetPlayer() const;
+            SoundManager& GetSoundManager();
+
+            // Sounds
+            //
+            unsigned int SOUND_FIRE;
+            unsigned int SOUND_THRUST;
+            unsigned int SOUND_BIG_ASTEROID_BANG;
+            unsigned int SOUND_MEDIUM_ASTEROID_BANG;
+            unsigned int SOUND_SMALL_ASTEROID_BANG;
 
         private:
-            void DeleteResources();
+            // Game
+            //
+            GameState m_state;
+            float m_width;
+            float m_height;
+
+            // Actors
+            //
+            Player* m_player;
+            EnemyShip* m_enemyShip;
+            AsteroidList m_asteroids;
+            BulletList m_bullets;
+            AsteroidFactory m_asteroidFactory;
+            int m_playerRespawnWait;
+            int m_enemyShipRespawnWait;
+
+            // Resources
+            //
+            BitmapFont* m_bitmapFont;
+            SoundManager* m_soundManager;
+
+            // Wave
+            //
+            AsteroidWave m_asteroidWave;
 
             // Asteroids
             //
@@ -97,29 +130,9 @@ namespace asteroids
             void ResolveAsteroidBulletCollisions();
             void ResolveEnemyShipBulletCollisions();
 
-            // Sound
+            // Resources
             //
-            SoundManager* m_soundManager;
-            unsigned int m_soundShoot;
-            unsigned int m_soundThrust;
-            unsigned int m_soundBangBig;
-
-            // Wave
-            //
-            AsteroidWave m_asteroidWave;
-
-            GameState m_state;
-            Player* m_player;
-            EnemyShip* m_enemyShip;
-            BitmapFont* m_bitmapFont;
-            AsteroidFactory m_asteroidFactory;
-            AsteroidList m_asteroids;
-            BulletList m_bullets;
-
-            float m_width;
-            float m_height;
-            int m_playerRespawnWait;
-            int m_enemyShipRespawnWait;
+            void DeleteResources();
     };
 }
 

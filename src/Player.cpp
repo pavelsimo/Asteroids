@@ -64,8 +64,8 @@ namespace asteroids
 
         // Set bullet position
         Vector2 bulletPos = m_position;
-        bulletPos.x += m_upright.x * 16.0f;
-        bulletPos.y += m_upright.y * 16.0f;
+        bulletPos.x += m_upright.x * 20.0f;
+        bulletPos.y += m_upright.y * 20.0f;
         bullet->SetPosition(bulletPos);
 
         // Set bullet velocity
@@ -76,6 +76,9 @@ namespace asteroids
 
         // Adding the bullet to the world list
         world.AddBullet(bullet);
+
+        // Play fire sound
+        world.GetSoundManager().Play(world.SOUND_FIRE, true);
 
         // Adding some time before allow shooting again
         m_shootTimeout = PLAYER_SHOOT_TIMEOUT;

@@ -6,15 +6,26 @@
 
 namespace asteroids
 {
+    const int WORLD_ASTEROID_MAX_SPEED = 4;
     const int WORLD_BLINK_RATE = 12;
+
+    // Respawn
+    //
     const int WORLD_ENEMYSHIP_RESPAWN_WAIT = 500;
     const int WORLD_PLAYER_RESPAWN_WAIT = 100;
-    const int WORLD_ASTEROID_MAX_SPEED = 4;
-    const std::string WORLD_ASTEROID_FONT_BITMAP = "fonts/hyperspace_bold_65.png";
-    const std::string WORLD_ASTEROID_FONT_CONFIG = "fonts/hyperspace_bold_65.xml";
+
+    // Fonts
+    //
+    const std::string WORLD_FONT_BITMAP = "fonts/hyperspace_bold_65.png";
+    const std::string WORLD_FONT_CONFIG = "fonts/hyperspace_bold_65.xml";
+
+    // Sound
+    //
     const std::string WORLD_SOUND_PLAYER_SHOOT = "sounds/fire.wav";
     const std::string WORLD_SOUND_PLAYER_THRUST = "sounds/thrust.wav";
     const std::string WORLD_SOUND_BIG_ASTEROID_BANG = "sounds/bangLarge.wav";
+    const std::string WORLD_SOUND_MEDIUM_ASTEROID_BANG = "sounds/bangMedium.wav";
+    const std::string WORLD_SOUND_SMALL_ASTEROID_BANG = "sounds/bangSmall.wav";
 
     World::World(const float width, const float height)
     {
@@ -62,8 +73,8 @@ namespace asteroids
         if(m_bitmapFont == nullptr)
         {
             m_bitmapFont = new BitmapFont();
-            m_bitmapFont->LoadBitmap(WORLD_ASTEROID_FONT_BITMAP);
-            m_bitmapFont->LoadGlyphsFromXML(WORLD_ASTEROID_FONT_CONFIG);
+            m_bitmapFont->LoadBitmap(WORLD_FONT_BITMAP);
+            m_bitmapFont->LoadGlyphsFromXML(WORLD_FONT_CONFIG);
         }
 
         if(m_soundManager == nullptr)
@@ -74,22 +85,36 @@ namespace asteroids
             // Fire audio
             m_soundManager->LoadAudio(
                 WORLD_SOUND_PLAYER_SHOOT,
-                &m_soundShoot,
+                &SOUND_FIRE,
                 false
             );
             
             // Thrust audio
             m_soundManager->LoadAudio(
                 WORLD_SOUND_PLAYER_THRUST,
-                &m_soundThrust,
+                &SOUND_THRUST,
                 true
             );
 
-            // Asteroid explosion audio
+            // Big asteroid bang audio
             m_soundManager->LoadAudio(
-                    WORLD_SOUND_BIG_ASTEROID_BANG,
-                    &m_soundBangBig,
-                    false
+                WORLD_SOUND_BIG_ASTEROID_BANG,
+                &SOUND_BIG_ASTEROID_BANG,
+                false
+            );
+
+            // Medium asteroid bang audio
+            m_soundManager->LoadAudio(
+                WORLD_SOUND_MEDIUM_ASTEROID_BANG,
+                &SOUND_MEDIUM_ASTEROID_BANG,
+                false
+            );
+
+            // Small asteroid bang audio
+            m_soundManager->LoadAudio(
+                WORLD_SOUND_SMALL_ASTEROID_BANG,
+                &SOUND_SMALL_ASTEROID_BANG,
+                false
             );
         }
         return true;
@@ -183,7 +208,7 @@ namespace asteroids
             case 'w':
             case 'W':
                 m_player->AddState(PlayerState::MOVING_FORWARD);
-                m_soundManager->Play(m_soundThrust, true);
+                m_soundManager->Play(SOUND_THRUST, true);
             break;
             case 's':
             case 'S':
@@ -199,7 +224,6 @@ namespace asteroids
             break;
             case ' ':
                 m_player->AddState(PlayerState::SHOOTING);
-                m_soundManager->Play(m_soundShoot, true);
             break;
         }
     }
@@ -212,7 +236,7 @@ namespace asteroids
             case 'w':
             case 'W':
                 m_player->RemoveState(PlayerState::MOVING_FORWARD);
-                m_soundManager->Stop(m_soundThrust);
+                m_soundManager->Stop(SOUND_THRUST);
                 break;
             case 's':
             case 'S':
@@ -329,28 +353,31 @@ namespace asteroids
     {
         AsteroidSize size = asteroid.GetSize();
         int numAsteroids = 2;
-
+        int speed = std::min(m_asteroidWave.speed + 1, WORLD_ASTEROID_MAX_SPEED);
         switch(size)
         {
             case AsteroidSize::BIG:
-
-                // Explosion sound
-                m_soundManager->Play(m_soundBangBig, true);
-
+                m_soundManager->Play(SOUND_BIG_ASTEROID_BANG, true);
                 for(int i = 0; i < numAsteroids; ++i)
                 {
-                    Asteroid* mediumAsteroid = m_asteroidFactory.CreateMediumAsteroid(m_asteroidWave.speed);
+                    Asteroid* mediumAsteroid = m_asteroidFactory.CreateMediumAsteroid(speed);
                     mediumAsteroid->SetPosition(asteroid.GetPosition());
                     m_asteroids.push_back(mediumAsteroid);
                 }
-            break;
+
+                break;
             case AsteroidSize::MEDIUM:
+                m_soundManager->Play(SOUND_MEDIUM_ASTEROID_BANG, true);
                 for(int i = 0; i < numAsteroids; ++i)
                 {
-                    Asteroid* smallAsteroid = m_asteroidFactory.CreateSmallAsteroid(m_asteroidWave.speed);
+                    Asteroid* smallAsteroid = m_asteroidFactory.CreateSmallAsteroid(speed);
                     smallAsteroid->SetPosition(asteroid.GetPosition());
                     m_asteroids.push_back(smallAsteroid);
                 }
+
+                break;
+            case AsteroidSize::SMALL:
+                m_soundManager->Play(SOUND_SMALL_ASTEROID_BANG, true);
             break;
         }
     }
@@ -573,5 +600,10 @@ namespace asteroids
     {
         int score = m_player->GetScore();
         DrawText(20, 20, std::to_string(score), m_bitmapFont);
+    }
+
+    SoundManager& World::GetSoundManager()
+    {
+        return *m_soundManager;
     }
 }
