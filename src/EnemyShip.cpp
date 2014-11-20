@@ -44,20 +44,20 @@ namespace asteroids
 
         //Ships outer body
         glBegin(GL_LINE_LOOP);
-            glVertex2f( 0.0f,0.0f);
-            glVertex2f( 9.0f,5.0f);
-            glVertex2f( 12.0f,9.0f);
-            glVertex2f( 18.0f,9.0f);
-            glVertex2f( 21.0f,5.0f);
-            glVertex2f( 30.0f,0.0f);
-            glVertex2f( 22.0f,-5.0f);
-            glVertex2f( 8.0f,-5.0f);
+            glVertex2f(0.0f,0.0f);
+            glVertex2f(9.0f,5.0f);
+            glVertex2f(12.0f,9.0f);
+            glVertex2f(18.0f,9.0f);
+            glVertex2f(21.0f,5.0f);
+            glVertex2f(30.0f,0.0f);
+            glVertex2f(22.0f,-5.0f);
+            glVertex2f(8.0f,-5.0f);
         glEnd();
 
         //middle line on ship
         glBegin(GL_LINE_LOOP);
-            glVertex2f( 0.0f,0.0f);
-            glVertex2f( 30.0f,0.0f);
+            glVertex2f(0.0f,0.0f);
+            glVertex2f(30.0f,0.0f);
         glEnd();
 
         // upper line on ship
@@ -69,14 +69,14 @@ namespace asteroids
         // retro vertex points
         glPointSize(2);
         glBegin(GL_POINTS);
-            glVertex2f( 0.0f,0.0f);
-            glVertex2f( 9.0f,5.0f);
-            glVertex2f( 12.0f,9.0f);
-            glVertex2f( 18.0f,9.0f);
-            glVertex2f( 21.0f,5.0f);
-            glVertex2f( 30.0f,0.0f);
-            glVertex2f( 22.0f,-5.0f);
-            glVertex2f( 8.0f,-5.0f);
+            glVertex2f(0.0f,0.0f);
+            glVertex2f(9.0f,5.0f);
+            glVertex2f(12.0f,9.0f);
+            glVertex2f(18.0f,9.0f);
+            glVertex2f(21.0f,5.0f);
+            glVertex2f(30.0f,0.0f);
+            glVertex2f(22.0f,-5.0f);
+            glVertex2f(8.0f,-5.0f);
             glEnd();
         glPopMatrix();
     }
@@ -115,6 +115,9 @@ namespace asteroids
 
         // Adding the bullet to the world list
         world.AddBullet(bullet);
+
+        // Play fire sound
+        world.GetSoundManager().Play(world.SOUND_FIRE, true);
 
         // Adding some time before allow shooting again
         m_shootTimeout = ENEMYSHIP_SHOOT_TIMEOUT;

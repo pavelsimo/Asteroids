@@ -13,7 +13,6 @@
 
 namespace asteroids
 {
-
     typedef std::list<Asteroid*> AsteroidList;
     typedef std::list<Bullet*> BulletList;
 
@@ -21,7 +20,8 @@ namespace asteroids
     {
         MENU,
         PLAYING,
-        RESPAWN
+        RESPAWN,
+        GAMEOVER
     };
 
     struct AsteroidWave
@@ -39,6 +39,7 @@ namespace asteroids
             bool LoadResources();
             void Render();
             void Update();
+            void Restart();
 
             // Events
             //
@@ -119,9 +120,11 @@ namespace asteroids
             void UpdatePlayer();
             void RenderPlayer();
             void RenderPlayerScore();
+            void RenderPlayerLifes();
             void DeletePlayer();
             void CreatePlayerDebris();
             void RespawnPlayer();
+
 
             // Collisions
             //

@@ -1,9 +1,6 @@
 #include "Player.h"
 #include "World.h"
 
-#include <iostream>
-
-
 namespace asteroids
 {
     const float PLAYER_ROTATION_ANGLE = 3.0f; // degrees
@@ -105,12 +102,14 @@ namespace asteroids
         m_points.push_back(Vector2(-12.0f, -10.0f));
     }
 
-    void Player::OnMoveForward() {
+    void Player::OnMoveForward()
+    {
         NormalizeVelocity();
         ApplyImpulse(m_upright, m_accel);
     }
 
-    void Player::OnMoveBackward() {
+    void Player::OnMoveBackward()
+    {
         NormalizeVelocity();
         ApplyImpulse(m_upright, -m_accel);
     }
@@ -198,8 +197,33 @@ namespace asteroids
         m_score += score;
     }
 
-    unsigned int Player::GetScore()
+    void Player::SetScore(unsigned int score)
+    {
+        m_score = score;
+    }
+
+    unsigned int Player::GetScore() const
     {
         return m_score;
+    }
+
+    bool Player::IsDead() const
+    {
+        return m_lifes == 0;
+    }
+
+    void Player::DecreaseOneLife()
+    {
+        m_lifes = std::max(0, m_lifes - 1);
+    }
+
+    int Player::GetLifes() const
+    {
+        return m_lifes;
+    }
+
+    void Player::SetLifes(unsigned int lifes)
+    {
+        m_lifes = static_cast<int>(lifes);
     }
 }

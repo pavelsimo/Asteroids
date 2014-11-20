@@ -113,7 +113,8 @@ void DrawTexture(
         GLuint texId,
         GLuint imgWidth, GLuint imgHeight,
         GLuint texWidth, GLuint texHeight,
-        Rect* clip
+        Rect* clip,
+        GLfloat scale
 )
 {
     if(texId != 0)
@@ -124,7 +125,6 @@ void DrawTexture(
         GLfloat texBottom = (GLfloat)imgHeight / (GLfloat)texHeight;
         GLfloat texLeft = 0.f;
         GLfloat texRight = (GLfloat)imgWidth / (GLfloat)texWidth;
-
         GLfloat quadWidth = imgWidth;
         GLfloat quadHeight = imgHeight;
 
@@ -139,6 +139,9 @@ void DrawTexture(
             quadWidth = clip->w;
             quadHeight = clip->h;
         }
+
+        quadWidth  *= scale;
+        quadHeight *= scale;
 
         // move to rendering point
         glTranslatef(x, y, 0.f);
@@ -165,6 +168,7 @@ void DrawText(
         GLfloat x, GLfloat y,
         const std::string &text,
         BitmapFont* font,
+        GLfloat scale,
         GLfloat glyphOffset,
         GLfloat spaceOffset,
         GLfloat lineSeparatorOffset
@@ -200,11 +204,12 @@ void DrawText(
         clip.h = glyph.height;
 
         DrawTexture(
-                curX, curY,
-                texId,
-                imgWidth, imgHeight,
-                texWidth, texHeight,
-                &clip
+            curX, curY,
+            texId,
+            imgWidth, imgHeight,
+            texWidth, texHeight,
+            &clip,
+            scale
         );
 
         curX += clip.w + glyphOffset;

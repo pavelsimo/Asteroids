@@ -8,21 +8,13 @@ namespace asteroids
 {
     const int WORLD_ASTEROID_MAX_SPEED = 4;
     const int WORLD_BLINK_RATE = 12;
-
-    // Respawn
-    //
     const int WORLD_ENEMYSHIP_RESPAWN_WAIT = 500;
     const int WORLD_PLAYER_RESPAWN_WAIT = 100;
-
-    // Fonts
-    //
+    const int WORLD_PLAYER_LIFES = 3;
     const std::string WORLD_FONT_BITMAP = "fonts/hyperspace_bold_65.png";
     const std::string WORLD_FONT_CONFIG = "fonts/hyperspace_bold_65.xml";
-
-    // Sound
-    //
-    const std::string WORLD_SOUND_PLAYER_SHOOT = "sounds/fire.wav";
-    const std::string WORLD_SOUND_PLAYER_THRUST = "sounds/thrust.wav";
+    const std::string WORLD_SOUND_FIRE = "sounds/fire.wav";
+    const std::string WORLD_SOUND_THRUST = "sounds/thrust.wav";
     const std::string WORLD_SOUND_BIG_ASTEROID_BANG = "sounds/bangLarge.wav";
     const std::string WORLD_SOUND_MEDIUM_ASTEROID_BANG = "sounds/bangMedium.wav";
     const std::string WORLD_SOUND_SMALL_ASTEROID_BANG = "sounds/bangSmall.wav";
@@ -49,7 +41,9 @@ namespace asteroids
         // Player
         //
         m_player = new Player();
-        m_player->SetPosition(Vector2(width * 0.5f, height * 0.5f));
+        m_player->SetPosition(Vector2(m_width * 0.5f, m_height * 0.5f));
+        m_player->SetLifes(WORLD_PLAYER_LIFES);
+        m_player->SetScore(0);
 
         // Random Seed
         srand(time(NULL));
@@ -68,6 +62,20 @@ namespace asteroids
         }
     }
 
+    void World::Restart()
+    {
+        DeleteEnemyShip();
+        DeleteAllBullets();
+        DeleteAllAsteroids();
+        m_player->SetPosition(Vector2(m_width * 0.5f, m_height * 0.5f));
+        m_player->SetLifes(WORLD_PLAYER_LIFES);
+        m_player->SetScore(0);
+        m_asteroidWave.id = 1;
+        m_asteroidWave.speed = 1;
+        m_asteroidWave.isDone = true;
+        m_state = GameState::PLAYING;
+    }
+
     bool World::LoadResources()
     {
         if(m_bitmapFont == nullptr)
@@ -84,14 +92,14 @@ namespace asteroids
 
             // Fire audio
             m_soundManager->LoadAudio(
-                WORLD_SOUND_PLAYER_SHOOT,
+                    WORLD_SOUND_FIRE,
                 &SOUND_FIRE,
                 false
             );
             
             // Thrust audio
             m_soundManager->LoadAudio(
-                WORLD_SOUND_PLAYER_THRUST,
+                    WORLD_SOUND_THRUST,
                 &SOUND_THRUST,
                 true
             );
@@ -131,10 +139,19 @@ namespace asteroids
 
     void World::Render()
     {
+        std::string gameOver = "Game Over";
         std::string banner = "Asteroid";
 
         switch (m_state)
         {
+            case GameState::GAMEOVER:
+                DrawText(
+                    m_width * 0.5f - 55*4,
+                    m_height * 0.5f - 55,
+                    gameOver,
+                    m_bitmapFont
+                );
+                break;
             case GameState::MENU:
                 DrawText(
                     m_width * 0.5f - 55*3,
@@ -146,6 +163,7 @@ namespace asteroids
             case GameState::RESPAWN:
                 // BLINK
                 RenderPlayerScore();
+                RenderPlayerLifes();
                 if(m_playerRespawnWait % WORLD_BLINK_RATE == 0)
                 {
                     RenderPlayer();
@@ -156,6 +174,7 @@ namespace asteroids
                 break;
             case GameState::PLAYING:
                 RenderPlayerScore();
+                RenderPlayerLifes();
                 RenderPlayer();
                 RenderEnemyShip();
                 RenderAsteroids();
@@ -170,6 +189,9 @@ namespace asteroids
 
         switch (m_state)
         {
+            case GameState::GAMEOVER:
+                // DO NOTHING
+                break;
             case GameState::RESPAWN:
                 if(!m_playerRespawnWait)
                 {
@@ -263,9 +285,14 @@ namespace asteroids
 
     void World::OnMouseClick(int button, int state, int x, int y)
     {
-        if(m_state == GameState::MENU)
+        switch (m_state)
         {
-            m_state = GameState::PLAYING;
+            case GameState::MENU:
+                m_state = GameState::PLAYING;
+                break;
+            case GameState::GAMEOVER:
+                Restart();
+                break;
         }
     }
 
@@ -482,6 +509,11 @@ namespace asteroids
         m_player->SetPosition(Vector2(m_width * 0.5f, m_height * 0.5f));
         m_state = GameState::RESPAWN;
         m_playerRespawnWait = WORLD_PLAYER_RESPAWN_WAIT;
+        m_player->DecreaseOneLife();
+        if(m_player->IsDead())
+        {
+            m_state = GameState::GAMEOVER;
+        }
     }
 
     const Player& World::GetPlayer() const
@@ -599,7 +631,20 @@ namespace asteroids
     void World::RenderPlayerScore()
     {
         int score = m_player->GetScore();
-        DrawText(20, 20, std::to_string(score), m_bitmapFont);
+        DrawText(20, 20, std::to_string(score), m_bitmapFont, 0.8);
+    }
+
+    void World::RenderPlayerLifes()
+    {
+        PointList pts = m_player->GetPoints();
+        int lifes = m_player->GetLifes();
+        int x = m_width - 100;
+        int y = 40;
+        for(int i = 0; i < lifes; ++i)
+        {
+            DrawPolygon(pts, x, y, 180);
+            x += 30;
+        }
     }
 
     SoundManager& World::GetSoundManager()

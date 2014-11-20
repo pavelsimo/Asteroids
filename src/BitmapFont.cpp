@@ -28,7 +28,7 @@ bool BitmapFont::LoadGlyphsFromXML(const std::string& filename)
 {
     try
     {
-        std::auto_ptr<Font> font (Font_(filename,
+        std::unique_ptr<Font> font (Font_(filename,
                 xml_schema::flags::dont_validate));
 
         m_family = static_cast<std::string>(font->family());

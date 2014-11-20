@@ -9,7 +9,8 @@
 
 namespace asteroids
 {
-    enum PlayerState {
+    enum PlayerState
+    {
         MOVING_FORWARD,
         MOVING_BACKWARD,
         ROTATING_CW,
@@ -30,8 +31,6 @@ namespace asteroids
             virtual void OnRotateCCW() override;
             virtual void OnUpdate(World &world) override;
             virtual void OnRender() override;
-            void AddState(int bit);
-            void RemoveState(int bit);
             bool IsIdle();
             bool IsMoving() const;
             bool IsMovingForward() const;
@@ -39,8 +38,15 @@ namespace asteroids
             bool IsRotatingCW() const;
             bool IsRotatingCCW() const;
             bool IsShooting() const;
+            bool IsDead() const;
+            void AddState(int bit);
+            void RemoveState(int bit);
             void AddScore(unsigned int score);
-            unsigned int GetScore();
+            void SetScore(unsigned int score);
+            unsigned int GetScore() const;
+            void DecreaseOneLife();
+            void SetLifes(unsigned int lifes);
+            int GetLifes() const;
 
         private:
             void Shoot(World &world);
@@ -53,6 +59,7 @@ namespace asteroids
             bool TestBit(int mask, int bit) const;
 
             unsigned int m_score;
+            int m_lifes;
             int m_state;
             float m_angle;
             Vector2 m_upright;
