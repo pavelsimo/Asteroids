@@ -6,26 +6,42 @@
 
 namespace asteroids
 {
-    const int WORLD_ASTEROID_MAX_SPEED = 4;
-    const int WORLD_BLINK_RATE = 12;
-    const int WORLD_ENEMYSHIP_RESPAWN_WAIT = 500;
-    const int WORLD_PLAYER_RESPAWN_WAIT = 100;
-    const int WORLD_PLAYER_LIFES = 3;
-    const std::string WORLD_FONT_BITMAP = "fonts/hyperspace_bold_65.png";
-    const std::string WORLD_FONT_CONFIG = "fonts/hyperspace_bold_65.xml";
-    const std::string WORLD_SOUND_FIRE = "sounds/fire.wav";
-    const std::string WORLD_SOUND_THRUST = "sounds/thrust.wav";
-    const std::string WORLD_SOUND_BIG_ASTEROID_BANG = "sounds/bangLarge.wav";
-    const std::string WORLD_SOUND_MEDIUM_ASTEROID_BANG = "sounds/bangMedium.wav";
-    const std::string WORLD_SOUND_SMALL_ASTEROID_BANG = "sounds/bangSmall.wav";
+    // Player
+    //
+    const int PLAYER_LIFES = 3;
+    const int PLAYER_BLINK_RATE = 12;
+    const int PLAYER_RESPAWN_WAIT = 100;
+    const int PLAYER_DESTROY_ASTEROID_PTS = 20;
+    const int PLAYER_DESTROY_ENEMEYSHIP_PTS = 100;
+
+    // Asteroids
+    //
+    const int ASTEROID_MAX_SPEED = 4;
+
+    // Enemy Ships
+    //
+    const int ENEMYSHIP_RESPAWN_WAIT = 500;
+
+    // Fonts
+    //
+    const std::string FONT_BITMAP = "fonts/hyperspace_bold_65.png";
+    const std::string FONT_CONFIG = "fonts/hyperspace_bold_65.xml";
+
+    // Sounds
+    //
+    const std::string SOUND_FIRE_SRC = "sounds/fire.wav";
+    const std::string SOUND_THRUST_SRC = "sounds/thrust.wav";
+    const std::string SOUND_BIG_ASTEROID_BANG_SRC = "sounds/bangLarge.wav";
+    const std::string SOUND_MEDIUM_ASTEROID_BANG_SRC = "sounds/bangMedium.wav";
+    const std::string SOUND_SMALL_ASTEROID_BANG_SRC = "sounds/bangSmall.wav";
 
     World::World(const float width, const float height)
     {
         m_width = width;
         m_height = height;
         m_state = GameState::MENU;
-        m_playerRespawnWait = WORLD_PLAYER_RESPAWN_WAIT;
-        m_enemyShipRespawnWait = WORLD_ENEMYSHIP_RESPAWN_WAIT;
+        m_playerRespawnWait = PLAYER_RESPAWN_WAIT;
+        m_enemyShipRespawnWait = ENEMYSHIP_RESPAWN_WAIT;
 
         // Resources
         //
@@ -42,7 +58,7 @@ namespace asteroids
         //
         m_player = new Player();
         m_player->SetPosition(Vector2(m_width * 0.5f, m_height * 0.5f));
-        m_player->SetLifes(WORLD_PLAYER_LIFES);
+        m_player->SetLifes(PLAYER_LIFES);
         m_player->SetScore(0);
 
         // Random Seed
@@ -68,7 +84,7 @@ namespace asteroids
         DeleteAllBullets();
         DeleteAllAsteroids();
         m_player->SetPosition(Vector2(m_width * 0.5f, m_height * 0.5f));
-        m_player->SetLifes(WORLD_PLAYER_LIFES);
+        m_player->SetLifes(PLAYER_LIFES);
         m_player->SetScore(0);
         m_asteroidWave.id = 1;
         m_asteroidWave.speed = 1;
@@ -81,8 +97,8 @@ namespace asteroids
         if(m_bitmapFont == nullptr)
         {
             m_bitmapFont = new BitmapFont();
-            m_bitmapFont->LoadBitmap(WORLD_FONT_BITMAP);
-            m_bitmapFont->LoadGlyphsFromXML(WORLD_FONT_CONFIG);
+            m_bitmapFont->LoadBitmap(FONT_BITMAP);
+            m_bitmapFont->LoadGlyphsFromXML(FONT_CONFIG);
         }
 
         if(m_soundManager == nullptr)
@@ -92,35 +108,35 @@ namespace asteroids
 
             // Fire audio
             m_soundManager->LoadAudio(
-                    WORLD_SOUND_FIRE,
+                SOUND_FIRE_SRC,
                 &SOUND_FIRE,
                 false
             );
             
             // Thrust audio
             m_soundManager->LoadAudio(
-                    WORLD_SOUND_THRUST,
+                SOUND_THRUST_SRC,
                 &SOUND_THRUST,
                 true
             );
 
             // Big asteroid bang audio
             m_soundManager->LoadAudio(
-                WORLD_SOUND_BIG_ASTEROID_BANG,
+               SOUND_BIG_ASTEROID_BANG_SRC,
                 &SOUND_BIG_ASTEROID_BANG,
                 false
             );
 
             // Medium asteroid bang audio
             m_soundManager->LoadAudio(
-                WORLD_SOUND_MEDIUM_ASTEROID_BANG,
+                SOUND_MEDIUM_ASTEROID_BANG_SRC,
                 &SOUND_MEDIUM_ASTEROID_BANG,
                 false
             );
 
             // Small asteroid bang audio
             m_soundManager->LoadAudio(
-                WORLD_SOUND_SMALL_ASTEROID_BANG,
+                SOUND_SMALL_ASTEROID_BANG_SRC,
                 &SOUND_SMALL_ASTEROID_BANG,
                 false
             );
@@ -140,11 +156,12 @@ namespace asteroids
     void World::Render()
     {
         std::string gameOver = "Game Over";
-        std::string banner = "Asteroid";
+        std::string asteroid = "Asteroid";
 
         switch (m_state)
         {
             case GameState::GAMEOVER:
+                RenderAsteroids();
                 DrawText(
                     m_width * 0.5f - 55*4,
                     m_height * 0.5f - 55,
@@ -156,7 +173,7 @@ namespace asteroids
                 DrawText(
                     m_width * 0.5f - 55*3,
                     m_height * 0.5f - 55,
-                    banner,
+                    asteroid,
                     m_bitmapFont
                 );
                 break;
@@ -164,7 +181,7 @@ namespace asteroids
                 // BLINK
                 RenderPlayerScore();
                 RenderPlayerLifes();
-                if(m_playerRespawnWait % WORLD_BLINK_RATE == 0)
+                if(m_playerRespawnWait % PLAYER_BLINK_RATE == 0)
                 {
                     RenderPlayer();
                 }
@@ -191,6 +208,7 @@ namespace asteroids
         {
             case GameState::GAMEOVER:
                 // DO NOTHING
+                UpdateAsteroids();
                 break;
             case GameState::RESPAWN:
                 if(!m_playerRespawnWait)
@@ -224,57 +242,67 @@ namespace asteroids
 
     void World::OnKeyDown(unsigned char key)
     {
-        // FIXME: (Pavel) this should be inside the GameStates
-        switch(key)
+        switch (m_state)
         {
-            case 'w':
-            case 'W':
-                m_player->AddState(PlayerState::MOVING_FORWARD);
-                m_soundManager->Play(SOUND_THRUST, true);
-            break;
-            case 's':
-            case 'S':
-                m_player->AddState(PlayerState::MOVING_BACKWARD);
-            break;
-            case 'a':
-            case 'A':
-                m_player->AddState(PlayerState::ROTATING_CCW);
-            break;
-            case 'd':
-            case 'D':
-                m_player->AddState(PlayerState::ROTATING_CW);
-            break;
-            case ' ':
-                m_player->AddState(PlayerState::SHOOTING);
-            break;
+            case GameState::PLAYING:
+            case GameState::RESPAWN:
+                switch(key)
+                {
+                    case 'w':
+                    case 'W':
+                        m_player->AddState(PlayerState::MOVING_FORWARD);
+                        m_soundManager->Play(SOUND_THRUST, true);
+                        break;
+                    case 's':
+                    case 'S':
+                        m_player->AddState(PlayerState::MOVING_BACKWARD);
+                        break;
+                    case 'a':
+                    case 'A':
+                        m_player->AddState(PlayerState::ROTATING_CCW);
+                        break;
+                    case 'd':
+                    case 'D':
+                        m_player->AddState(PlayerState::ROTATING_CW);
+                        break;
+                    case ' ':
+                        m_player->AddState(PlayerState::SHOOTING);
+                        break;
+                }
+                break;
         }
     }
 
     void World::OnKeyUp(unsigned char key)
     {
-        // FIXME: (Pavel) this should be inside the GameStates
-        switch(key)
+        switch (m_state)
         {
-            case 'w':
-            case 'W':
-                m_player->RemoveState(PlayerState::MOVING_FORWARD);
-                m_soundManager->Stop(SOUND_THRUST);
+            case GameState::PLAYING:
+            case GameState::RESPAWN:
+                switch(key)
+                {
+                    case 'w':
+                    case 'W':
+                        m_player->RemoveState(PlayerState::MOVING_FORWARD);
+                        m_soundManager->Stop(SOUND_THRUST);
+                        break;
+                    case 's':
+                    case 'S':
+                        m_player->RemoveState(PlayerState::MOVING_BACKWARD);
+                        break;
+                    case 'a':
+                    case 'A':
+                        m_player->RemoveState(PlayerState::ROTATING_CCW);
+                        break;
+                    case 'd':
+                    case 'D':
+                        m_player->RemoveState(PlayerState::ROTATING_CW);
+                        break;
+                    case ' ':
+                        m_player->RemoveState(PlayerState::SHOOTING);
+                        break;
+                }
                 break;
-            case 's':
-            case 'S':
-                m_player->RemoveState(PlayerState::MOVING_BACKWARD);
-                break;
-            case 'a':
-            case 'A':
-                m_player->RemoveState(PlayerState::ROTATING_CCW);
-                break;
-            case 'd':
-            case 'D':
-                m_player->RemoveState(PlayerState::ROTATING_CW);
-                break;
-            case ' ':
-                m_player->RemoveState(PlayerState::SHOOTING);
-            break;
         }
     }
 
@@ -346,11 +374,14 @@ namespace asteroids
     {
         for(auto it = m_bullets.begin(); it != m_bullets.end(); it++)
         {
-            Bullet* bullet = *it;
+            Bullet* bullet = dynamic_cast<Bullet*>(*it);
             if(bullet->CanDelete())
             {
                 it = m_bullets.erase(it);
-                delete bullet;
+                if(bullet != nullptr)
+                {
+                    delete bullet;
+                }
             }
         }
     }
@@ -376,11 +407,11 @@ namespace asteroids
         }
     }
 
-    void World::CreateAsteroidDebris(const Asteroid &asteroid)
+    void World::CreateAsteroidDebris(const Asteroid& asteroid)
     {
         AsteroidSize size = asteroid.GetSize();
         int numAsteroids = 2;
-        int speed = std::min(m_asteroidWave.speed + 1, WORLD_ASTEROID_MAX_SPEED);
+        int speed = std::min(m_asteroidWave.speed + 1, ASTEROID_MAX_SPEED);
         switch(size)
         {
             case AsteroidSize::BIG:
@@ -409,13 +440,13 @@ namespace asteroids
         }
     }
 
-    void World::ResolvePlayerAsteroidCollisions()
+
+    void World::ResolvePlayerActorCollisions(const ActorList &actors)
     {
-        // TODO: (Pavel) Add a common method for this and ResolvePlayerBulletCollisions()
-        for(auto i = m_asteroids.begin(); i != m_asteroids.end(); i++)
+        for(auto i = actors.begin(); i != actors.end(); i++)
         {
-            Asteroid* asteroid = *i;
-            if(m_player->IsColliding(*asteroid))
+            Actor* actor = *i;
+            if(m_player->IsColliding(*actor))
             {
                 CreatePlayerDebris();
                 RespawnPlayer();
@@ -424,19 +455,14 @@ namespace asteroids
         }
     }
 
+    void World::ResolvePlayerAsteroidCollisions()
+    {
+        ResolvePlayerActorCollisions(m_asteroids);
+    }
+
     void World::ResolvePlayerBulletCollisions()
     {
-        // TODO: (Pavel) Add a common method for this and ResolvePlayerAsteroidCollisions()
-        for(auto i = m_bullets.begin(); i != m_bullets.end(); i++)
-        {
-            Bullet* bullet = *i;
-            if(m_player->IsColliding(*bullet))
-            {
-                CreatePlayerDebris();
-                RespawnPlayer();
-                break;
-            }
-        }
+        ResolvePlayerActorCollisions(m_bullets);
     }
 
     void World::ResolveEnemyShipBulletCollisions()
@@ -445,14 +471,18 @@ namespace asteroids
         {
             for(auto i = m_bullets.begin(); i != m_bullets.end(); i++)
             {
-                Bullet* bullet = *i;
+                Actor* bullet = *i;
                 if(m_enemyShip->IsColliding(*bullet))
                 {
-                    DeleteEnemyShip();
                     m_bullets.erase(i);
-                    delete bullet;
-                    // TODO: (Pavel) This should be a constant
-                    m_player->AddScore(100);
+                    m_player->AddScore(PLAYER_DESTROY_ENEMEYSHIP_PTS);
+
+                    DeleteEnemyShip();
+
+                    if(bullet != nullptr)
+                    {
+                        delete bullet;
+                    }
                     break;
                 }
             }
@@ -463,20 +493,30 @@ namespace asteroids
     {
         for(auto i = m_bullets.begin(); i != m_bullets.end(); i++)
         {
-            Bullet* bullet = *i;
+            Bullet* bullet = dynamic_cast<Bullet*>(*i);
             for(auto j = m_asteroids.begin(); j != m_asteroids.end(); j++)
             {
-                Asteroid* asteroid = *j;
+                Asteroid* asteroid = dynamic_cast<Asteroid*>(*j);
                 if(bullet->IsColliding(*asteroid))
                 {
-                    i = m_bullets.erase(i);
                     CreateAsteroidDebris(*asteroid);
-                    m_asteroids.erase(j);
-                    delete asteroid;
-                    delete bullet;
 
-                    // TODO: (Pavel) Assign score according to the asteroid size
-                    m_player->AddScore(20);
+                    // Remove this elements from the list
+                    i = m_bullets.erase(i);
+                    m_asteroids.erase(j);
+
+                    // Deallocate memory
+                    if(asteroid != nullptr)
+                    {
+                        delete asteroid;
+                    }
+
+                    if(bullet != nullptr)
+                    {
+                        delete bullet;
+                    }
+
+                    m_player->AddScore(PLAYER_DESTROY_ASTEROID_PTS);
                     break;
                 }
             }
@@ -494,7 +534,10 @@ namespace asteroids
             Asteroid* asteroid = m_asteroidFactory.Create(size);
             asteroid->SetPosition(Vector2(x[j], y[j]));
             m_asteroids.push_back(asteroid);
-            if(j >= 4) j = 0;
+            if(j >= 4)
+            {
+                j = 0;
+            }
         }
     }
 
@@ -508,7 +551,7 @@ namespace asteroids
         m_player->Initialize();
         m_player->SetPosition(Vector2(m_width * 0.5f, m_height * 0.5f));
         m_state = GameState::RESPAWN;
-        m_playerRespawnWait = WORLD_PLAYER_RESPAWN_WAIT;
+        m_playerRespawnWait = PLAYER_RESPAWN_WAIT;
         m_player->DecreaseOneLife();
         if(m_player->IsDead())
         {
@@ -549,7 +592,7 @@ namespace asteroids
             }
             m_enemyShipRespawnWait = std::max(0, m_enemyShipRespawnWait - 1);
         } else {
-            m_enemyShipRespawnWait = WORLD_ENEMYSHIP_RESPAWN_WAIT;
+            m_enemyShipRespawnWait = ENEMYSHIP_RESPAWN_WAIT;
         }
     }
 
@@ -616,7 +659,7 @@ namespace asteroids
         if(m_asteroidWave.isDone)
         {
             int numAsteroids = m_asteroidWave.id * 2;
-            m_asteroidWave.speed = std::min(m_asteroidWave.id, WORLD_ASTEROID_MAX_SPEED);
+            m_asteroidWave.speed = std::min(m_asteroidWave.id, ASTEROID_MAX_SPEED);
             CreateAsteroids(numAsteroids, AsteroidSize::BIG, m_asteroidWave.speed);
             m_asteroidWave.id++;
             m_asteroidWave.isDone = false;

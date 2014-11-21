@@ -13,8 +13,7 @@
 
 namespace asteroids
 {
-    typedef std::list<Asteroid*> AsteroidList;
-    typedef std::list<Bullet*> BulletList;
+    typedef std::list<Actor*> ActorList;
 
     enum GameState
     {
@@ -77,8 +76,8 @@ namespace asteroids
             //
             Player* m_player;
             EnemyShip* m_enemyShip;
-            AsteroidList m_asteroids;
-            BulletList m_bullets;
+            ActorList m_asteroids;
+            ActorList m_bullets;
             AsteroidFactory m_asteroidFactory;
             int m_playerRespawnWait;
             int m_enemyShipRespawnWait;
@@ -98,7 +97,7 @@ namespace asteroids
             void UpdateAsteroids();
             void CreateAsteroids(int n, AsteroidSize size, int speed);
             void CreateAsteroidsWave();
-            void CreateAsteroidDebris(const Asteroid &asteroid);
+            void CreateAsteroidDebris(const Asteroid& asteroid);
             void DeleteAllAsteroids();
 
             // Bullets
@@ -128,6 +127,7 @@ namespace asteroids
 
             // Collisions
             //
+            void ResolvePlayerActorCollisions(const ActorList& actors);
             void ResolvePlayerAsteroidCollisions();
             void ResolvePlayerBulletCollisions();
             void ResolveAsteroidBulletCollisions();
