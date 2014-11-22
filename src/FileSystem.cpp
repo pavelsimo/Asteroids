@@ -17,7 +17,6 @@ std::string FileSystem::GetCurrentWorkingDir()
 {
     char* tmp = getcwd(m_buffer, sizeof(m_buffer));
     std::string currentWorkDir = "";
-    printf("PATH=%s\n", tmp);
     if (tmp)
     {
         currentWorkDir = tmp;

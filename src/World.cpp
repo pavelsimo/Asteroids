@@ -76,7 +76,7 @@ namespace asteroids
 
     void World::Restart()
     {
-        DeleteActor(m_enemyShip);
+        DeleteEnemyShip();
         DeleteAllBullets();
         DeleteAllAsteroids();
         m_player->SetPosition(Vector2(m_width * 0.5f, m_height * 0.5f));
@@ -101,7 +101,6 @@ namespace asteroids
         {
             m_soundManager = SoundManager::Instance();
             m_soundManager->Initialize();
-            m_soundManager->PrintAvailableDevices();
 
             // Fire audio
             m_soundManager->LoadAudio(

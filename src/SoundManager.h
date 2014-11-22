@@ -14,18 +14,15 @@ class SoundManager
         virtual ~SoundManager();
 
         static SoundManager* Instance();
-        static void Close();
 
         bool Initialize();
         void PrintAvailableDevices();
-
         bool LoadAudio(const std::string filename, unsigned int *audioId, bool loop = false);
         bool ReleaseAudio(unsigned int audioId);
         int LoadAudioBuffer(const std::string filename);
         int FindAudioInBuffer(const std::string filename);
 
         bool Play(unsigned int audioId, bool forceRestart = false);
-
         bool Stop(unsigned int audioId);
         bool StopAll();
 
@@ -47,8 +44,8 @@ class SoundManager
 
     private:
         // TODO: (Pavel) LoadOGG
-        // TODO: (Pavel) LoadWAV
         // TODO: (Pavel) LoadAU
+        void LoadWAV(const std::string &filename, unsigned int bufferId);
 
         SoundManager();
 

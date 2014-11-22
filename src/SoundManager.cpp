@@ -145,11 +145,6 @@ void SoundManager::PrintAvailableDevices() {
     }
 }
 
-void SoundManager::Close()
-{
-
-}
-
 bool SoundManager::LoadAudio(const std::string filename, unsigned int *audioId, bool loop)
 {
     if(filename.empty())
@@ -206,22 +201,26 @@ int SoundManager::LoadAudioBuffer(const std::string filename)
         return -1;
     }
 
-    int bufferID = m_audioBuffersCount;
+    int bufferId = m_audioBuffersCount;
 
     alGetError();
 
-    // LoadWAV
-    m_audioBuffers[bufferID] = alutCreateBufferFromFile(filename.c_str());
+    LoadWAV(filename, bufferId);
 
     if (CheckALError( "LoadAudioBuffer()::alutCreateBufferFromFile" ))
     {
         return false;
     }
 
-    m_audioBuffersFilename[bufferID] = filename;
+    m_audioBuffersFilename[bufferId] = filename;
     m_audioBuffersCount++;
 
-    return bufferID;
+    return bufferId;
+}
+
+void SoundManager::LoadWAV(const std::string &filename, unsigned int bufferId)
+{
+    m_audioBuffers[bufferId] = alutCreateBufferFromFile(filename.c_str());
 }
 
 int SoundManager::FindAudioInBuffer(const std::string filename)
@@ -238,6 +237,13 @@ int SoundManager::FindAudioInBuffer(const std::string filename)
 
 bool SoundManager::ReleaseAudio(unsigned int audioId)
 {
+    if(audioId >= MAX_AUDIO_SOURCES)
+    {
+        return false;
+    }
+
+    alSourceStop(m_audioSources[audioId]);
+    m_audioBuffersCount--;
 
     return false;
 }
@@ -298,7 +304,24 @@ bool SoundManager::Stop(unsigned int audioId)
 
 bool SoundManager::StopAll()
 {
-    return false;
+    if(m_audioSourcesCount >= MAX_AUDIO_SOURCES)
+    {
+        return false;
+    }
+
+    alGetError();
+
+    for(int i = 0; i < m_audioSourcesCount; ++i)
+    {
+        Stop(i);
+    }
+
+    if(CheckALError("StopAll::alSourceStop"))
+    {
+        return false;
+    }
+
+    return true;
 }
 
 bool SoundManager::Pause(unsigned int audioId)
@@ -351,17 +374,56 @@ bool SoundManager::ResumeAll()
 
 bool SoundManager::SetSoundPosition(unsigned int audioId, ALfloat x, ALfloat y, ALfloat z)
 {
-    return false;
+    if (audioId >= MAX_AUDIO_SOURCES)
+    {
+        return false;
+    }
+
+    ALfloat pos[] = {x, y, z};
+    alSourcefv(m_audioSources[audioId], AL_POSITION, pos);
+
+    if (CheckALError("SetSoundPosition::alSourcefv:AL_POSITION"))
+    {
+        return false;
+    }
+
+    return true;
 }
 
 bool SoundManager::SetSoundVelocity(unsigned int audioId, ALfloat x, ALfloat y, ALfloat z)
 {
-    return false;
+    if (audioId >= MAX_AUDIO_SOURCES)
+    {
+        return false;
+    }
+
+    ALfloat vel[] = {x, y, z};
+    alSourcefv(m_audioSources[audioId], AL_VELOCITY, vel);
+
+    if (CheckALError("SetSoundPosition::alSourcefv:AL_VELOCITY"))
+    {
+        return false;
+    }
+
+    return true;
 }
 
 bool SoundManager::SetSoundDirection(unsigned int audioId, ALfloat x, ALfloat y, ALfloat z)
 {
-    return false;
+    if (audioId >= MAX_AUDIO_SOURCES)
+    {
+        return false;
+    }
+
+    ALfloat dir[] = {x, y, z};
+    alSourcefv(m_audioSources[audioId], AL_DIRECTION, dir);
+
+    if (CheckALError("SetSoundPosition::alSourcefv:AL_DIRECTION"))
+    {
+        return false;
+    }
+
+    return true;
 }
 
 bool SoundManager::SetListenerPosition(unsigned int audioId,
@@ -370,7 +432,38 @@ bool SoundManager::SetListenerPosition(unsigned int audioId,
     ALfloat yaw, ALfloat pitch, ALfloat roll
 )
 {
-    return false;
+
+    // Position
+    ALfloat pos[] = {xPos, yPos, zPos};
+    alListenerfv(AL_POSITION, pos);
+
+    if (CheckALError("SetListenerPosition::alListenerfv:AL_POSITION")) {
+        return false;
+    }
+
+    // Velocity
+    ALfloat vel[] = {xVel, yVel, zVel};
+    alListenerfv(AL_VELOCITY, vel);
+
+    if (CheckALError("SetListenerPosition::alListenerfv:AL_VELOCITY")) {
+        return false;
+    }
+
+    // Direction
+    ALfloat dir[] = {yaw, pitch, roll};
+    alListenerfv(AL_ORIENTATION, dir);
+
+    if (CheckALError("SetListenerPosition::alListenerfv:AL_DIRECTION"))
+    {
+        return false;
+    }
+
+    //alListenerf(AL_MAX_DISTANCE, 10000.0f);
+    //alListenerf(AL_MIN_GAIN, 0.0f);
+    //alListenerf(AL_MAX_GAIN, 1.0f);
+    //alListenerf(AL_GAIN, 1.0f);
+
+    return true;
 }
 
 bool SoundManager::CheckALError()

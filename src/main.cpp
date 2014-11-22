@@ -125,13 +125,6 @@ int main(int argc, char** argv)
     // initialize alut
     alutInit (&argc, argv);
 
-
-    FileSystem* fs = FileSystem::Instance();
-
-    std::cout << fs->GetCurrentWorkingDir() << std::endl;
-
-    delete fs;
-
     if(!g_world->LoadResources())
     {
         // TODO: (Pavel) Clean up the world and end
