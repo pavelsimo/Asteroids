@@ -15,7 +15,9 @@ class SoundManager
 
         static SoundManager* Instance();
         static void Close();
+
         bool Initialize();
+        void PrintAvailableDevices();
 
         bool LoadAudio(const std::string filename, unsigned int *audioId, bool loop = false);
         bool ReleaseAudio(unsigned int audioId);

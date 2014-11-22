@@ -12,7 +12,7 @@ namespace asteroids
     const int PLAYER_BLINK_RATE = 12;
     const int PLAYER_RESPAWN_WAIT = 100;
     const int PLAYER_DESTROY_ASTEROID_PTS = 20;
-    const int PLAYER_DESTROY_ENEMEYSHIP_PTS = 100;
+    const int PLAYER_DESTROY_ENEMYSHIP_PTS = 100;
 
     // Asteroids
     //
@@ -72,15 +72,11 @@ namespace asteroids
         DeleteAllBullets();
         DeleteAllAsteroids();
         DeleteResources();
-        if(m_soundManager != nullptr)
-        {
-            delete m_soundManager;
-        }
     }
 
     void World::Restart()
     {
-        DeleteEnemyShip();
+        DeleteActor(m_enemyShip);
         DeleteAllBullets();
         DeleteAllAsteroids();
         m_player->SetPosition(Vector2(m_width * 0.5f, m_height * 0.5f));
@@ -105,6 +101,7 @@ namespace asteroids
         {
             m_soundManager = SoundManager::Instance();
             m_soundManager->Initialize();
+            m_soundManager->PrintAvailableDevices();
 
             // Fire audio
             m_soundManager->LoadAudio(
@@ -122,7 +119,7 @@ namespace asteroids
 
             // Big asteroid bang audio
             m_soundManager->LoadAudio(
-               SOUND_BIG_ASTEROID_BANG_SRC,
+                SOUND_BIG_ASTEROID_BANG_SRC,
                 &SOUND_BIG_ASTEROID_BANG,
                 false
             );
@@ -150,6 +147,11 @@ namespace asteroids
         {
             delete m_bitmapFont;
             m_bitmapFont = nullptr;
+        }
+        if(m_soundManager != nullptr)
+        {
+            delete m_soundManager;
+            m_soundManager = nullptr;
         }
     }
 
@@ -207,35 +209,61 @@ namespace asteroids
         switch (m_state)
         {
             case GameState::GAMEOVER:
-                // DO NOTHING
+
+                // Updates
+                //
                 UpdateAsteroids();
+
                 break;
             case GameState::RESPAWN:
+
                 if(!m_playerRespawnWait)
                 {
                     m_state = GameState::PLAYING;
                 }
+
+                // Updates
+                //
                 UpdatePlayer();
                 UpdateEnemyShip();
                 UpdateAsteroids();
                 UpdateBullets();
+
+                // Other Actions
+                //
                 DeleteFarAwayBullets();
                 RespawnEnemyShip();
+
+                // Collisions
+                //
                 ResolveAsteroidBulletCollisions();
                 ResolveEnemyShipBulletCollisions();
+
+
                 m_playerRespawnWait = std::max(0, m_playerRespawnWait - 1);
+
                 break;
             case GameState::PLAYING:
+
+                // Updates
+                //
                 UpdatePlayer();
                 UpdateEnemyShip();
                 UpdateAsteroids();
                 UpdateBullets();
+
+                // Other Actions
+                //
                 DeleteFarAwayBullets();
                 RespawnEnemyShip();
+
+                // Collisions
+                //
                 ResolveAsteroidBulletCollisions();
                 ResolvePlayerAsteroidCollisions();
                 ResolvePlayerBulletCollisions();
                 ResolveEnemyShipBulletCollisions();
+
                 break;
         }
     }
@@ -378,10 +406,7 @@ namespace asteroids
             if(bullet->CanDelete())
             {
                 it = m_bullets.erase(it);
-                if(bullet != nullptr)
-                {
-                    delete bullet;
-                }
+                DeleteActor(bullet);
             }
         }
     }
@@ -422,7 +447,6 @@ namespace asteroids
                     mediumAsteroid->SetPosition(asteroid.GetPosition());
                     m_asteroids.push_back(mediumAsteroid);
                 }
-
                 break;
             case AsteroidSize::MEDIUM:
                 m_soundManager->Play(SOUND_MEDIUM_ASTEROID_BANG, true);
@@ -474,15 +498,15 @@ namespace asteroids
                 Actor* bullet = *i;
                 if(m_enemyShip->IsColliding(*bullet))
                 {
+                    // Remove from the list
                     m_bullets.erase(i);
-                    m_player->AddScore(PLAYER_DESTROY_ENEMEYSHIP_PTS);
 
+                    // Deallocate
                     DeleteEnemyShip();
+                    DeleteActor(bullet);
 
-                    if(bullet != nullptr)
-                    {
-                        delete bullet;
-                    }
+                    // Increase player score
+                    m_player->AddScore(PLAYER_DESTROY_ENEMYSHIP_PTS);
                     break;
                 }
             }
@@ -501,21 +525,15 @@ namespace asteroids
                 {
                     CreateAsteroidDebris(*asteroid);
 
-                    // Remove this elements from the list
+                    // Remove from the list
                     i = m_bullets.erase(i);
                     m_asteroids.erase(j);
 
-                    // Deallocate memory
-                    if(asteroid != nullptr)
-                    {
-                        delete asteroid;
-                    }
+                    // Deallocate
+                    DeleteActor(asteroid);
+                    DeleteActor(bullet);
 
-                    if(bullet != nullptr)
-                    {
-                        delete bullet;
-                    }
-
+                    // Increase player score
                     m_player->AddScore(PLAYER_DESTROY_ASTEROID_PTS);
                     break;
                 }
@@ -612,32 +630,11 @@ namespace asteroids
         }
     }
 
-    void World::DeleteEnemyShip()
-    {
-        if(m_enemyShip != nullptr)
-        {
-            delete m_enemyShip;
-            m_enemyShip = nullptr;
-        }
-    }
-
-    void World::DeletePlayer()
-    {
-        if(m_player != nullptr)
-        {
-            delete m_player;
-            m_player = nullptr;
-        }
-    }
-
     void World::DeleteAllAsteroids()
     {
         for(auto it = m_asteroids.begin(); it != m_asteroids.end(); it++)
         {
-            if(*it != nullptr)
-            {
-                delete *it;
-            }
+            DeleteActor(*it);
         }
         m_asteroids.clear();
     }
@@ -646,10 +643,7 @@ namespace asteroids
     {
         for(auto it = m_bullets.begin(); it != m_bullets.end(); it++)
         {
-            if(*it != nullptr)
-            {
-                delete *it;
-            }
+            DeleteActor(*it);
         }
         m_bullets.clear();
     }
@@ -693,5 +687,25 @@ namespace asteroids
     SoundManager& World::GetSoundManager()
     {
         return *m_soundManager;
+    }
+
+    void World::DeleteActor(Actor *actor)
+    {
+        if(actor != nullptr)
+        {
+            delete actor;
+        }
+    }
+
+    void World::DeletePlayer()
+    {
+        DeleteActor(m_player);
+        m_player = nullptr;
+    }
+
+    void World::DeleteEnemyShip()
+    {
+        DeleteActor(m_enemyShip);
+        m_enemyShip = nullptr;
     }
 }

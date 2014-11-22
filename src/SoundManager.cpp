@@ -131,6 +131,20 @@ bool SoundManager::Initialize()
     return true;
 }
 
+void SoundManager::PrintAvailableDevices() {
+    std::cout << "Sound devices available : " << '\n';
+    if (alcIsExtensionPresent(NULL, "ALC_ENUMERATION_EXT") == AL_TRUE)
+    {
+        std::cout << "List of devices : " << '\n';
+        std::cout << (char*) alcGetString(NULL, ALC_DEVICE_SPECIFIER);
+        std::cout << '\n';
+    }
+    else
+    {
+        std::cout << "Enumeration error" << '\n';
+    }
+}
+
 void SoundManager::Close()
 {
 

@@ -111,8 +111,8 @@ namespace asteroids
             //
             void UpdateEnemyShip();
             void RenderEnemyShip();
-            void DeleteEnemyShip();
             void RespawnEnemyShip();
+            void DeleteEnemyShip();
 
             // Player
             //
@@ -120,9 +120,9 @@ namespace asteroids
             void RenderPlayer();
             void RenderPlayerScore();
             void RenderPlayerLifes();
-            void DeletePlayer();
             void CreatePlayerDebris();
             void RespawnPlayer();
+            void DeletePlayer();
 
 
             // Collisions
@@ -136,6 +136,10 @@ namespace asteroids
             // Resources
             //
             void DeleteResources();
+
+            // Helpers
+            //
+            void DeleteActor(Actor *actor);
     };
 }
 
