@@ -62,7 +62,11 @@ namespace asteroids
         m_player->SetScore(0);
 
         // Random Seed
+#ifdef _WIN32
+        srand(time_t(NULL));
+#else
         srand(time(NULL));
+#endif
     }
 
     World::~World()
@@ -399,13 +403,15 @@ namespace asteroids
 
     void World::DeleteFarAwayBullets()
     {
-        for(auto it = m_bullets.begin(); it != m_bullets.end(); it++)
+        for(auto it = m_bullets.begin(); it != m_bullets.end(); )
         {
             Bullet* bullet = dynamic_cast<Bullet*>(*it);
             if(bullet->CanDelete())
             {
                 it = m_bullets.erase(it);
                 DeleteActor(bullet);
+            } else {
+                it++;
             }
         }
     }
@@ -514,14 +520,16 @@ namespace asteroids
 
     void World::ResolveAsteroidBulletCollisions()
     {
-        for(auto i = m_bullets.begin(); i != m_bullets.end(); i++)
+        for(auto i = m_bullets.begin(); i != m_bullets.end(); )
         {
             Bullet* bullet = dynamic_cast<Bullet*>(*i);
+            bool foundCollision = false;
             for(auto j = m_asteroids.begin(); j != m_asteroids.end(); j++)
             {
                 Asteroid* asteroid = dynamic_cast<Asteroid*>(*j);
                 if(bullet->IsColliding(*asteroid))
                 {
+                    foundCollision = true;
                     CreateAsteroidDebris(*asteroid);
 
                     // Remove from the list
@@ -536,6 +544,10 @@ namespace asteroids
                     m_player->AddScore(PLAYER_DESTROY_ASTEROID_PTS);
                     break;
                 }
+            }
+            if(!foundCollision) 
+            {
+                i++;
             }
         }
     }
@@ -573,6 +585,7 @@ namespace asteroids
         if(m_player->IsDead())
         {
             m_state = GameState::GAMEOVER;
+            m_soundManager->StopAll();
         }
     }
 
