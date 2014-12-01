@@ -106,35 +106,30 @@ namespace asteroids
             m_soundManager = SoundManager::Instance();
             m_soundManager->Initialize();
 
-            // Fire audio
             m_soundManager->LoadAudio(
                 SOUND_FIRE_SRC,
                 &SOUND_FIRE,
                 false
             );
-            
-            // Thrust audio
+
             m_soundManager->LoadAudio(
                 SOUND_THRUST_SRC,
                 &SOUND_THRUST,
                 true
             );
 
-            // Big asteroid bang audio
             m_soundManager->LoadAudio(
                 SOUND_BIG_ASTEROID_BANG_SRC,
                 &SOUND_BIG_ASTEROID_BANG,
                 false
             );
 
-            // Medium asteroid bang audio
             m_soundManager->LoadAudio(
                 SOUND_MEDIUM_ASTEROID_BANG_SRC,
                 &SOUND_MEDIUM_ASTEROID_BANG,
                 false
             );
 
-            // Small asteroid bang audio
             m_soundManager->LoadAudio(
                 SOUND_SMALL_ASTEROID_BANG_SRC,
                 &SOUND_SMALL_ASTEROID_BANG,
@@ -207,7 +202,8 @@ namespace asteroids
 
     void World::Update()
     {
-        CreateAsteroidsWave();
+
+        std::cout << m_asteroids.size() << std::endl;
 
         switch (m_state)
         {
@@ -247,6 +243,8 @@ namespace asteroids
 
                 break;
             case GameState::PLAYING:
+
+                CreateAsteroidsWave();
 
                 // Updates
                 //
@@ -523,21 +521,21 @@ namespace asteroids
         for(auto i = m_bullets.begin(); i != m_bullets.end(); )
         {
             Bullet* bullet = dynamic_cast<Bullet*>(*i);
+            Asteroid* asteroid = nullptr;
             bool foundCollision = false;
+
             for(auto j = m_asteroids.begin(); j != m_asteroids.end(); j++)
             {
-                Asteroid* asteroid = dynamic_cast<Asteroid*>(*j);
+                asteroid = dynamic_cast<Asteroid*>(*j);
                 if(bullet->IsColliding(*asteroid))
                 {
                     foundCollision = true;
-                    CreateAsteroidDebris(*asteroid);
 
                     // Remove from the list
                     i = m_bullets.erase(i);
                     m_asteroids.erase(j);
 
                     // Deallocate
-                    DeleteActor(asteroid);
                     DeleteActor(bullet);
 
                     // Increase player score
@@ -548,6 +546,11 @@ namespace asteroids
             if(!foundCollision) 
             {
                 i++;
+            }
+            else
+            {
+                CreateAsteroidDebris(*asteroid);
+                DeleteActor(asteroid);
             }
         }
     }
