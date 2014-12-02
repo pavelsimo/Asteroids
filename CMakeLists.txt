@@ -1,15 +1,16 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8.4)
 PROJECT(Asteroids)
 
-# Modules
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
+if (UNIX)
+    # Modules
+    set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
 
-# Ouput directories
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/bin)
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/bin)
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/bin)
+    # Ouput directories
+    set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/bin)
+    set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/bin)
+    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/bin)
+endif (UNIX)
 
-# Executables
 ADD_EXECUTABLE(
     ${PROJECT_NAME}
     src/main.cpp
@@ -58,7 +59,6 @@ ENDIF(NOT OPENGL_FOUND)
 #---------------------
 
 IF(WIN32)
-
     INCLUDE_DIRECTORIES(
         ${PROJECT_SOURCE_DIR}/deps/win32/devil/include
         ${PROJECT_SOURCE_DIR}/deps/win32/glut/include
@@ -78,15 +78,9 @@ IF(WIN32)
         ${PROJECT_SOURCE_DIR}/deps/win32/openal/lib/alut.lib
         ${PROJECT_SOURCE_DIR}/deps/win32/xercesc/lib/xerces-c_3.lib
     )
-
 ENDIF(WIN32)
 
-#---------------------
-# UNIX
-#---------------------
-
 if (UNIX)
-
     # GLUT
     FIND_PACKAGE(GLUT REQUIRED)
     INCLUDE_DIRECTORIES(${GLUT_INCLUDE_DIRS})
@@ -131,22 +125,23 @@ if (UNIX)
         ${ALUT_LIBRARY}
         ${XERCESC_LIBRARY}
     )
-
 endif (UNIX)
 
 # Copy fonts
 ADD_CUSTOM_COMMAND(
     TARGET ${PROJECT_NAME} PRE_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory
-    ${CMAKE_SOURCE_DIR}/fonts ${CMAKE_ARCHIVE_OUTPUT_DIRECTORY}/fonts
+    ${PROJECT_SOURCE_DIR}/fonts ${PROJECT_SOURCE_DIR}/bin/fonts
 )
 
 # Copy sounds
 ADD_CUSTOM_COMMAND(
     TARGET ${PROJECT_NAME} PRE_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory
-    ${CMAKE_SOURCE_DIR}/sounds ${CMAKE_ARCHIVE_OUTPUT_DIRECTORY}/sounds
+    ${PROJECT_SOURCE_DIR}/sounds ${PROJECT_SOURCE_DIR}/bin/sounds
 )
 
-INSTALL (TARGETS ${PROJECT_NAME}
-         RUNTIME DESTINATION ${PROJECT_BINARY_DIR}/bin)
+INSTALL (
+    TARGETS ${PROJECT_NAME}
+    RUNTIME DESTINATION ${PROJECT_BINARY_DIR}/bin
+)
