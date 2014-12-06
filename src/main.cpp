@@ -113,8 +113,7 @@ int main(int argc, char** argv)
     glutInitDisplayMode(GLUT_DOUBLE);
     glutInitWindowSize(SCREEN_WIDTH, SCREEN_HEIGHT);
     glutCreateWindow(SCREEN_TITLE);
-    glutSetOption(GLUT_ACTION_ON_WINDOW_CLOSE,
-            GLUT_ACTION_CONTINUE_EXECUTION);
+    glutSetOption(GLUT_ACTION_ON_WINDOW_CLOSE,GLUT_ACTION_CONTINUE_EXECUTION);
 
 
     if(!InitializeGL())

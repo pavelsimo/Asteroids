@@ -20,7 +20,7 @@ class FileSystem
 
     private:
         static FileSystem* m_fileSystem;
-        char m_buffer[PATH_MAX];
+        char m_buffer[4096];
         FileSystem();
 };
 

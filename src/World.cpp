@@ -202,9 +202,6 @@ namespace asteroids
 
     void World::Update()
     {
-
-        std::cout << m_asteroids.size() << std::endl;
-
         switch (m_state)
         {
             case GameState::GAMEOVER:
@@ -683,7 +680,7 @@ namespace asteroids
     void World::RenderPlayerScore()
     {
         int score = m_player->GetScore();
-        DrawText(20, 20, std::to_string(score), m_bitmapFont, 0.8);
+        DrawText(20, 20, std::to_string(static_cast<long long>(score)), m_bitmapFont, 0.8);
     }
 
     void World::RenderPlayerLifes()
