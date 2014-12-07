@@ -51,7 +51,7 @@ namespace asteroids
 
         // Enemy Ship
         //
-		m_enemyShip = nullptr;
+        m_enemyShip = nullptr;
         m_enemyShipRespawnWait = ENEMYSHIP_RESPAWN_WAIT;
 
         // Resources
