@@ -110,14 +110,14 @@ void GameLoop(int value)
 
 void Clean()
 {
-	if (g_world != 0)
-	{
-		delete g_world;
-		g_world = 0;
-	}
+    if (g_world != 0)
+    {
+        delete g_world;
+        g_world = 0;
+    }
 
-	// exit alut
-	alutExit();
+    // exit alut
+    alutExit();
 }
 
 int main(int argc, char** argv)
@@ -129,7 +129,7 @@ int main(int argc, char** argv)
     glutInitWindowSize(SCREEN_WIDTH, SCREEN_HEIGHT);
     glutCreateWindow(SCREEN_TITLE);
     //glutSetOption(GLUT_ACTION_ON_WINDOW_CLOSE,GLUT_ACTION_CONTINUE_EXECUTION);
-	
+    
     if(!InitializeGL())
     {
         std::cout << "Unable to initalize OpenGL." << std::endl;
@@ -147,7 +147,7 @@ int main(int argc, char** argv)
     glutDisplayFunc(Render);
     glutKeyboardFunc(OnKeyDownEvent);
     glutKeyboardUpFunc(OnKeyUpEvent);
-	glutCloseFunc(Clean);
+    glutCloseFunc(Clean);
     glutPassiveMotionFunc(OnMouseMoveEvent);
     glutMouseFunc(OnMouseClick);
     glutTimerFunc(1000 / SCREEN_FPS, GameLoop, 0);
