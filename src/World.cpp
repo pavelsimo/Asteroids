@@ -41,6 +41,17 @@ namespace asteroids
         m_height = height;
         m_state = GameState::MENU;
         m_playerRespawnWait = PLAYER_RESPAWN_WAIT;
+
+        // Player
+        //
+        m_player = new Player();
+        m_player->SetPosition(Vector2(m_width * 0.5f, m_height * 0.5f));
+        m_player->SetLifes(PLAYER_LIFES);
+        m_player->SetScore(0);
+
+        // Enemy Ship
+        //
+		m_enemyShip = nullptr;
         m_enemyShipRespawnWait = ENEMYSHIP_RESPAWN_WAIT;
 
         // Resources
@@ -53,13 +64,6 @@ namespace asteroids
         m_asteroidWave.id = 1;
         m_asteroidWave.speed = 1;
         m_asteroidWave.isDone = true;
-
-        // Player
-        //
-        m_player = new Player();
-        m_player->SetPosition(Vector2(m_width * 0.5f, m_height * 0.5f));
-        m_player->SetLifes(PLAYER_LIFES);
-        m_player->SetScore(0);
 
         // Random Seed
 #ifdef _WIN32

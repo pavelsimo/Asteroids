@@ -5,13 +5,15 @@
 #include "World.h"
 #include "FileSystem.h"
 
-// constants
+// Constants
+//
 const int SCREEN_WIDTH = 1136;
 const int SCREEN_HEIGHT = 640;
 const int SCREEN_FPS = 60;
 const char* SCREEN_TITLE = "Asteroids";
 
-// methods
+// Methods
+//
 bool InitializeGL();
 bool LoadingMedia();
 void Render();
@@ -20,8 +22,9 @@ void OnKeyDownEvent(unsigned char key, int x, int y);
 void OnKeyUpEvent(unsigned char key, int x, int y);
 void OnMouseClick(int button, int state, int x, int y);
 void GameLoop(int value);
+void Clean();
 
-asteroids::World* g_world = nullptr;
+asteroids::World* g_world = 0;
 
 bool InitializeGL()
 {
@@ -105,6 +108,18 @@ void GameLoop(int value)
     glutTimerFunc( 1000 / SCREEN_FPS, GameLoop, value);
 }
 
+void Clean()
+{
+	if (g_world != 0)
+	{
+		delete g_world;
+		g_world = 0;
+	}
+
+	// exit alut
+	alutExit();
+}
+
 int main(int argc, char** argv)
 {
     g_world = new asteroids::World(SCREEN_WIDTH, SCREEN_HEIGHT);
@@ -113,9 +128,8 @@ int main(int argc, char** argv)
     glutInitDisplayMode(GLUT_DOUBLE);
     glutInitWindowSize(SCREEN_WIDTH, SCREEN_HEIGHT);
     glutCreateWindow(SCREEN_TITLE);
-    glutSetOption(GLUT_ACTION_ON_WINDOW_CLOSE,GLUT_ACTION_CONTINUE_EXECUTION);
-
-
+    //glutSetOption(GLUT_ACTION_ON_WINDOW_CLOSE,GLUT_ACTION_CONTINUE_EXECUTION);
+	
     if(!InitializeGL())
     {
         std::cout << "Unable to initalize OpenGL." << std::endl;
@@ -133,20 +147,11 @@ int main(int argc, char** argv)
     glutDisplayFunc(Render);
     glutKeyboardFunc(OnKeyDownEvent);
     glutKeyboardUpFunc(OnKeyUpEvent);
+	glutCloseFunc(Clean);
     glutPassiveMotionFunc(OnMouseMoveEvent);
     glutMouseFunc(OnMouseClick);
     glutTimerFunc(1000 / SCREEN_FPS, GameLoop, 0);
     glutMainLoop();
-
-
-    // exit alut
-    alutExit();
-
-    if(g_world != nullptr)
-    {
-        delete g_world;
-        g_world = nullptr;
-    }
 
     return 0;
 }
