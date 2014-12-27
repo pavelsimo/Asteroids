@@ -43,16 +43,16 @@ ADD_EXECUTABLE(
 )
 
 # C++11
-INCLUDE(CheckCXXCompilerFlag)
-CHECK_CXX_COMPILER_FLAG("-std=c++11" COMPILER_SUPPORTS_CXX11)
-CHECK_CXX_COMPILER_FLAG("-std=c++0x" COMPILER_SUPPORTS_CXX0X)
-IF(COMPILER_SUPPORTS_CXX11)
-    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
-ELSEIF(COMPILER_SUPPORTS_CXX0X)
-    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x")
-ELSE()
-        MESSAGE(STATUS "The compiler ${CMAKE_CXX_COMPILER} has no C++11 support. Please use a different C++ compiler.")
-ENDIF()
+#INCLUDE(CheckCXXCompilerFlag)
+#CHECK_CXX_COMPILER_FLAG("-std=c++11" COMPILER_SUPPORTS_CXX11)
+#CHECK_CXX_COMPILER_FLAG("-std=c++0x" COMPILER_SUPPORTS_CXX0X)
+#IF(COMPILER_SUPPORTS_CXX11)
+#    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+#ELSEIF(COMPILER_SUPPORTS_CXX0X)
+#    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x")
+#ELSE()
+#        MESSAGE(STATUS "The compiler ${CMAKE_CXX_COMPILER} has no C++11 support. Please use a different C++ compiler.")
+#ENDIF()
 
 # OpenGL
 FIND_PACKAGE(OpenGL REQUIRED)
@@ -75,7 +75,6 @@ IF(WIN32)
         ${PROJECT_SOURCE_DIR}/deps/win32/xercesc/include
         ${PROJECT_SOURCE_DIR}/deps/win32/xsd/include
         ${PROJECT_SOURCE_DIR}/deps/win32/sdl2/include
-        #${PROJECT_SOURCE_DIR}/deps/win32/glut/include
     )
 
     TARGET_LINK_LIBRARIES(
@@ -87,9 +86,7 @@ IF(WIN32)
         ${PROJECT_SOURCE_DIR}/deps/win32/openal/lib/OpenAL32.lib
         ${PROJECT_SOURCE_DIR}/deps/win32/openal/lib/alut.lib
         ${PROJECT_SOURCE_DIR}/deps/win32/xercesc/lib/xerces-c_3.lib
-        ${PROJECT_SOURCE_DIR}/deps/win32/xercesc/lib/xerces-c_3.lib
         ${PROJECT_SOURCE_DIR}/deps/win32/sdl2/lib/SDL2.lib
-        #${PROJECT_SOURCE_DIR}/deps/win32/glut/lib/freeglut.lib
     )
 
 
@@ -141,7 +138,6 @@ if (UNIX)
         ${PROJECT_NAME}
         ${OPENGL_LIBRARIES}
         ${SDL2_LIBRARY}
-        #${GLUT_LIBRARY}
         ${IL_LIBRARIES}
         ${ILU_LIBRARIES}
         ${ILUT_LIBRARIES}
