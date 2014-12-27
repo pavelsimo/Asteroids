@@ -71,36 +71,40 @@ IF(WIN32)
     
     INCLUDE_DIRECTORIES(
         ${PROJECT_SOURCE_DIR}/deps/win32/devil/include
-        ${PROJECT_SOURCE_DIR}/deps/win32/glut/include
         ${PROJECT_SOURCE_DIR}/deps/win32/openal/include
         ${PROJECT_SOURCE_DIR}/deps/win32/xercesc/include
         ${PROJECT_SOURCE_DIR}/deps/win32/xsd/include
+        ${PROJECT_SOURCE_DIR}/deps/win32/sdl2/include
+        #${PROJECT_SOURCE_DIR}/deps/win32/glut/include
     )
 
     TARGET_LINK_LIBRARIES(
         ${PROJECT_NAME}
         ${OPENGL_LIBRARIES}
-        ${PROJECT_SOURCE_DIR}/deps/win32/glut/lib/freeglut.lib
         ${PROJECT_SOURCE_DIR}/deps/win32/devil/lib/DevIL.lib
         ${PROJECT_SOURCE_DIR}/deps/win32/devil/lib/ILU.lib
         ${PROJECT_SOURCE_DIR}/deps/win32/devil/lib/ILUT.lib
         ${PROJECT_SOURCE_DIR}/deps/win32/openal/lib/OpenAL32.lib
         ${PROJECT_SOURCE_DIR}/deps/win32/openal/lib/alut.lib
         ${PROJECT_SOURCE_DIR}/deps/win32/xercesc/lib/xerces-c_3.lib
+        ${PROJECT_SOURCE_DIR}/deps/win32/xercesc/lib/xerces-c_3.lib
+        ${PROJECT_SOURCE_DIR}/deps/win32/sdl2/lib/SDL2.lib
+        #${PROJECT_SOURCE_DIR}/deps/win32/glut/lib/freeglut.lib
     )
+
 
 ENDIF(WIN32)
 
 if (UNIX)
     
     # GLUT
-    FIND_PACKAGE(GLUT REQUIRED)
-    INCLUDE_DIRECTORIES(${GLUT_INCLUDE_DIRS})
-    LINK_DIRECTORIES(${GLUT_LIBRARY_DIRS})
-    ADD_DEFINITIONS(${GLUT_DEFINITIONS})
-    IF(NOT GLUT_FOUND)
-        MESSAGE(ERROR " GLUT not found!")
-    ENDIF(NOT GLUT_FOUND)
+    #FIND_PACKAGE(GLUT REQUIRED)
+    #INCLUDE_DIRECTORIES(${GLUT_INCLUDE_DIRS})
+    #LINK_DIRECTORIES(${GLUT_LIBRARY_DIRS})
+    #ADD_DEFINITIONS(${GLUT_DEFINITIONS})
+    #IF(NOT GLUT_FOUND)
+    #    MESSAGE(ERROR " GLUT not found!")
+    #ENDIF(NOT GLUT_FOUND)
 
     # DevIL
     FIND_PACKAGE(DevIL REQUIRED)
