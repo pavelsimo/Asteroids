@@ -67,22 +67,22 @@ void DrawCircle(
 );
 
 void DrawTexture(
-        GLfloat x, GLfloat y,
-        GLuint texId,
-        GLuint imgWidth, GLuint imgHeight,
-        GLuint texWidth, GLuint texHeight,
-        Rect* clip = NULL,
-        GLfloat scale = 1.0
+    GLfloat x, GLfloat y,
+    GLuint texId,
+    GLuint imgWidth, GLuint imgHeight,
+    GLuint texWidth, GLuint texHeight,
+    Rect* clip = NULL,
+    GLfloat scale = 1.0
 );
 
 void DrawText(
-        GLfloat x, GLfloat y,
-        const std::string &text,
-        BitmapFont* font,
-        GLfloat scale = 1.0,
-        GLfloat glyphOffset = 3,
-        GLfloat spaceOffset = 32,
-        GLfloat lineSeparatorOffset = 100
+    GLfloat x, GLfloat y,
+    const std::string &text,
+    BitmapFont* font,
+    GLfloat scale = 1.0,
+    GLfloat glyphOffset = 3,
+    GLfloat spaceOffset = 32,
+    GLfloat lineSeparatorOffset = 100
 );
 
 #endif // __DRAWING_H_

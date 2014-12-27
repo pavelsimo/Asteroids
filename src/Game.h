@@ -52,10 +52,6 @@ class Game
         uint32_t m_height;
         uint32_t m_framesPerSecond;
         uint32_t m_timePerFrame;
-
-        //
-        // SDL
-        //
         SDL_Window* m_window;
         SDL_GLContext m_glContext;
 };

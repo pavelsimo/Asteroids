@@ -192,7 +192,6 @@ void Game::HandleEvent(SDL_Event &event)
     }
 }
 
-
 void Game::Cleanup()
 {
     OnCleanup();
