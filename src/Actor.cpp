@@ -110,7 +110,8 @@ namespace asteroids
         m_position = position;
     }
 
-    void Actor::SetVel(const Vector2 &vel) {
+    void Actor::SetVel(const Vector2 &vel) 
+    {
         m_vel = vel;
     }
 

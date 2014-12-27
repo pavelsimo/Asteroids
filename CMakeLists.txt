@@ -38,6 +38,8 @@ ADD_EXECUTABLE(
     src/BitmapFontXMLParser.cxx
     src/SoundManager.cpp
     src/FileSystem.cpp
+    src/Game.cpp
+    src/AsteroidGame.cpp
 )
 
 # C++11
@@ -124,10 +126,18 @@ if (UNIX)
         MESSAGE(ERROR " Xerces-C not found!")
     ENDIF(NOT XERCESC_FOUND)
 
+    # SDL2
+    FIND_PACKAGE(SDL2 REQUIRED)
+    INCLUDE_DIRECTORIES(${SDL2_INCLUDE_DIR})
+    IF(NOT SDL2_FOUND)
+        MESSAGE(ERROR " SDL2 not found!")
+    ENDIF(NOT SDL2_FOUND)
+
     TARGET_LINK_LIBRARIES(
         ${PROJECT_NAME}
         ${OPENGL_LIBRARIES}
-        ${GLUT_LIBRARY}
+        ${SDL2_LIBRARY}
+        #${GLUT_LIBRARY}
         ${IL_LIBRARIES}
         ${ILU_LIBRARIES}
         ${ILUT_LIBRARIES}
