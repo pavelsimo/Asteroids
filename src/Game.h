@@ -26,6 +26,7 @@ class Game
         virtual ~Game();
 
         bool Run();
+        void Exit();
 
         virtual void OnCleanup();
         virtual void OnInit();
@@ -42,7 +43,6 @@ class Game
     private:
         void Render();
         void Update();
-        void Exit();
         bool Init();
         void HandleEvent(SDL_Event& event);
         void Cleanup();

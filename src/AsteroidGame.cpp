@@ -38,6 +38,9 @@ namespace asteroids
             case SDLK_SPACE:
                 m_world->OnKeyDown(' ');
                 break;
+            case SDLK_ESCAPE:
+                Exit();
+                break;
         }
     }
 
