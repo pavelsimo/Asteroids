@@ -5,19 +5,11 @@ PROJECT(Asteroids)
 SET(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
 
 # Ouput directories
-SET(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/bin)
-SET(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/bin)
-SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/bin)
-
-# Move all targets to /bin (e.g. Release, Debug)
-IF(WIN32)
-    FOREACH(OUTPUTCONFIG ${CMAKE_CONFIGURATION_TYPES})
-        STRING( TOUPPER ${OUTPUTCONFIG} OUTPUTCONFIG )
-        SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY_${OUTPUTCONFIG} ${PROJECT_SOURCE_DIR}/bin)
-        SET(CMAKE_LIBRARY_OUTPUT_DIRECTORY_${OUTPUTCONFIG} ${PROJECT_SOURCE_DIR}/bin)
-        SET(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_${OUTPUTCONFIG} ${PROJECT_SOURCE_DIR}/bin)
-    ENDFOREACH(OUTPUTCONFIG CMAKE_CONFIGURATION_TYPES)
-ENDIF(WIN32)
+if (UNIX)
+    SET(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/bin)
+    SET(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/bin)
+    SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/bin)
+ENDIF (UNIX)
 
 ADD_EXECUTABLE(
     ${PROJECT_NAME}
@@ -79,6 +71,10 @@ IF(WIN32)
 
 ENDIF(WIN32)
 
+#---------------------
+# UNIX
+#---------------------
+
 if (UNIX)
 
     # C++11
@@ -92,7 +88,7 @@ if (UNIX)
     ELSE()
             MESSAGE(STATUS "The compiler ${CMAKE_CXX_COMPILER} has no C++11 support. Please use a different C++ compiler.")
     ENDIF()
-
+    
     # DevIL
     FIND_PACKAGE(DevIL REQUIRED)
     IF(NOT IL_FOUND)
@@ -135,34 +131,69 @@ if (UNIX)
         ${ALUT_LIBRARY}
         ${XERCESC_LIBRARY}
     )
+
+    # Copy fonts
+    ADD_CUSTOM_COMMAND(
+        TARGET ${PROJECT_NAME} PRE_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+        ${PROJECT_SOURCE_DIR}/fonts ${PROJECT_SOURCE_DIR}/bin/fonts
+    )
+
+    # Copy sounds
+    ADD_CUSTOM_COMMAND(
+        TARGET ${PROJECT_NAME} PRE_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+        ${PROJECT_SOURCE_DIR}/sounds ${PROJECT_SOURCE_DIR}/bin/sounds
+    )
     
-endif (UNIX)
-
-# Copy fonts
-ADD_CUSTOM_COMMAND(
-    TARGET ${PROJECT_NAME} PRE_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_directory
-    ${PROJECT_SOURCE_DIR}/fonts ${PROJECT_SOURCE_DIR}/bin/fonts
-)
-
-# Copy sounds
-ADD_CUSTOM_COMMAND(
-    TARGET ${PROJECT_NAME} PRE_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_directory
-    ${PROJECT_SOURCE_DIR}/sounds ${PROJECT_SOURCE_DIR}/bin/sounds
-)
+ENDIF (UNIX)
 
 IF(WIN32)
+
     # Gather all *.dll files
     FILE(GLOB_RECURSE DLLFiles ${PROJECT_SOURCE_DIR}/deps/*.dll)
-    
-    FOREACH(DLLFile ${DLLFiles})
+
+    # Iterate throught the different targets (e.g. Release, Debug)
+    FOREACH(OUTPUTCONFIG ${CMAKE_CONFIGURATION_TYPES})
+
+        # Copy fonts
         ADD_CUSTOM_COMMAND(
             TARGET ${PROJECT_NAME} PRE_BUILD
-            COMMAND ${CMAKE_COMMAND} -E copy 
-            ${DLLFile} ${PROJECT_SOURCE_DIR}/bin
+            COMMAND ${CMAKE_COMMAND} -E copy_directory
+            ${PROJECT_SOURCE_DIR}/fonts ${OUTPUTCONFIG}/fonts
         )
-    ENDFOREACH()
+
+        # Copy sounds
+        ADD_CUSTOM_COMMAND(
+            TARGET ${PROJECT_NAME} PRE_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy_directory
+            ${PROJECT_SOURCE_DIR}/sounds ${OUTPUTCONFIG}/sounds
+        )
+
+        FOREACH(DLLFile ${DLLFiles})
+            ADD_CUSTOM_COMMAND(
+                TARGET ${PROJECT_NAME} PRE_BUILD
+                COMMAND ${CMAKE_COMMAND} -E copy 
+                ${DLLFile} ${OUTPUTCONFIG}
+            )
+        ENDFOREACH()
+
+    ENDFOREACH(OUTPUTCONFIG CMAKE_CONFIGURATION_TYPES)
+
+    # Copy fonts, for running the project from VS
+    ADD_CUSTOM_COMMAND(
+        TARGET ${PROJECT_NAME} PRE_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+        ${PROJECT_SOURCE_DIR}/fonts fonts
+    )
+
+    # Copy sounds, for running the project from VS
+    ADD_CUSTOM_COMMAND(
+        TARGET ${PROJECT_NAME} PRE_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+        ${PROJECT_SOURCE_DIR}/sounds sounds
+    )
+
 ENDIF(WIN32)
 
 INSTALL (
