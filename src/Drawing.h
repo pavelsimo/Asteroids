@@ -62,7 +62,7 @@ void DrawCircle(
     GLfloat x,
     GLfloat y,
     GLfloat radius = 5,
-    GLfloat sides = 20,
+    GLuint sides = 20,
     GLfloat lineWidth = 1.f
 );
 

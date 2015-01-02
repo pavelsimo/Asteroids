@@ -5,7 +5,7 @@ namespace asteroids
     AsteroidGame::AsteroidGame(const std::string &title, uint32_t width, uint32_t height,
             uint32_t framesPerSecond)
     : Game(title, width, height, framesPerSecond),
-      m_world(new World(width, height))
+      m_world(new World((float)width, (float)height))
     {
 
     }

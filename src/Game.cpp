@@ -69,8 +69,8 @@ bool Game::Init()
     // GL ORTHOGRAPHIC PROJECTION
     //
     float left = 0;
-    float right = m_width;
-    float bottom = m_height;
+    float right = static_cast<float>(m_width);
+    float bottom = static_cast<float>(m_height);
     float top = 0;
 
     glViewport(0, 0, m_width, m_height);

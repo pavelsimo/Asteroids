@@ -311,7 +311,7 @@ bool SoundManager::StopAll()
 
     alGetError();
 
-    for(int i = 0; i < m_audioSourcesCount; ++i)
+    for(int i = 0; i < (int)m_audioSourcesCount; ++i)
     {
         Stop(i);
     }

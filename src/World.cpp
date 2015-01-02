@@ -447,7 +447,7 @@ namespace asteroids
                 m_soundManager->Play(SOUND_BIG_ASTEROID_BANG, true);
                 for(int i = 0; i < numAsteroids; ++i)
                 {
-                    Asteroid* mediumAsteroid = m_asteroidFactory.CreateMediumAsteroid(speed);
+                    Asteroid* mediumAsteroid = m_asteroidFactory.CreateMediumAsteroid((float)speed);
                     mediumAsteroid->SetPosition(asteroid.GetPosition());
                     m_asteroids.push_back(mediumAsteroid);
                 }
@@ -456,7 +456,7 @@ namespace asteroids
                 m_soundManager->Play(SOUND_MEDIUM_ASTEROID_BANG, true);
                 for(int i = 0; i < numAsteroids; ++i)
                 {
-                    Asteroid* smallAsteroid = m_asteroidFactory.CreateSmallAsteroid(speed);
+                    Asteroid* smallAsteroid = m_asteroidFactory.CreateSmallAsteroid((float)speed);
                     smallAsteroid->SetPosition(asteroid.GetPosition());
                     m_asteroids.push_back(smallAsteroid);
                 }
@@ -622,7 +622,9 @@ namespace asteroids
             if(!m_enemyShipRespawnWait)
             {
                 m_enemyShip = new EnemyShip();
-                m_enemyShip->SetPosition(Vector2(0, Random<int>(0, m_height)));
+                m_enemyShip->SetPosition(
+                    Vector2(0.f, (float) Random<int>(0, (int) m_height))
+                );
             }
             m_enemyShipRespawnWait = std::max(0, m_enemyShipRespawnWait - 1);
         } else {
@@ -684,18 +686,18 @@ namespace asteroids
     void World::RenderPlayerScore()
     {
         int score = m_player->GetScore();
-        DrawText(20, 20, std::to_string(static_cast<long long>(score)), m_bitmapFont, 0.8);
+        DrawText(20.f, 20.f, std::to_string(static_cast<long long>(score)), m_bitmapFont, 0.8f);
     }
 
     void World::RenderPlayerLifes()
     {
         PointList pts = m_player->GetPoints();
         int lifes = m_player->GetLifes();
-        int x = m_width - 100;
+        int x = static_cast<int>(m_width - 100);
         int y = 40;
         for(int i = 0; i < lifes; ++i)
         {
-            DrawPolygon(pts, x, y, 180);
+            DrawPolygon(pts, (float)x, (float)y, 180.f);
             x += 30;
         }
     }

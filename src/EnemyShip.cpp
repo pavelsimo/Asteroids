@@ -28,7 +28,7 @@ namespace asteroids
         }
 
         float amplitude = 2.5f;
-        m_position.x += Random<int>(5, 10) / 10.0;
+        m_position.x += Random<int>(5, 10) / 10.f;
         Vector2 dir;
         dir.SetUnitLengthAndYawDegrees(m_position.x);
         m_position.y += amplitude * dir.y;

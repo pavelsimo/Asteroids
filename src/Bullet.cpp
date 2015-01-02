@@ -4,7 +4,7 @@ namespace asteroids
 {
     const int BULLET_RADIUS = 3;
     const int BULLET_VERTEX = 8;
-    const int BULLET_LINE_WIDTH = 1;
+    const float BULLET_LINE_WIDTH = 1.f;
     const int BULLET_LIFE_SPAN = 40;
 
     Bullet::Bullet()
@@ -34,7 +34,7 @@ namespace asteroids
         for(int angle = 0; angle < 360; angle+=steps)
         {
             Vector2 p;
-            p.SetUnitLengthAndYawDegrees(angle);
+            p.SetUnitLengthAndYawDegrees(static_cast<float>(angle));
             p *= BULLET_RADIUS;
             m_points.push_back(p);
         }
@@ -48,6 +48,6 @@ namespace asteroids
 
     void Bullet::OnRender()
     {
-        DrawPolygon(m_points, m_position.x, m_position.y, 0, BULLET_LINE_WIDTH);
+        DrawPolygon(m_points, m_position.x, m_position.y, 0.f, BULLET_LINE_WIDTH);
     }
 }

@@ -13,7 +13,7 @@ namespace asteroids
 
     }
 
-    Asteroid *AsteroidFactory::Create(AsteroidSize size, int speed)
+    Asteroid *AsteroidFactory::Create(AsteroidSize size, float speed)
     {
         switch(size)
         {
@@ -27,7 +27,7 @@ namespace asteroids
         return nullptr;
     }
 
-    Asteroid *AsteroidFactory::CreateSmallAsteroid(int speed)
+    Asteroid *AsteroidFactory::CreateSmallAsteroid(float speed)
     {
         float radius = 15.0f;
         int numVertices = 15;
@@ -36,7 +36,7 @@ namespace asteroids
         return asteroid;
     }
 
-    Asteroid *AsteroidFactory::CreateMediumAsteroid(int speed)
+    Asteroid *AsteroidFactory::CreateMediumAsteroid(float speed)
     {
         float radius = 30.0f;
         int numVertices = 15;
@@ -45,7 +45,7 @@ namespace asteroids
         return asteroid;
     }
 
-    Asteroid *AsteroidFactory::CreateBigAsteroid(int speed)
+    Asteroid *AsteroidFactory::CreateBigAsteroid(float speed)
     {
         float radius = 60.0f;
         int numVertices = 15;

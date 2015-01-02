@@ -7,12 +7,12 @@ int32 RoundToInt(real x)
 
 real Deg2Rad(real degrees)
 {
-    return degrees * (PI / 180.0);
+    return degrees * (PI / 180.f);
 }
 
 real Rad2Deg(real rad)
 {
-    return rad * (180.0 / PI);
+    return rad * (180.f / PI);
 }
 
 boolean IsPowerOf2(int32 x)

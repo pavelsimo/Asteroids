@@ -5,8 +5,8 @@ namespace asteroids
 {
     const float PLAYER_ROTATION_ANGLE = 3.0f; // degrees
     const float PLAYER_MAX_SPEED = 6.f;
-    const float PLAYER_SHOOT_TIMEOUT = 20;
-    const float PLAYER_DRAG = 0.999;
+    const int PLAYER_SHOOT_TIMEOUT = 20;
+    const float PLAYER_DRAG = 0.999f;
 
     Player::Player()
     : m_score(0)
@@ -23,8 +23,8 @@ namespace asteroids
     void Player::Initialize()
     {
         m_angle = 180;
-        m_vel = Vector2(0, 0);
-        m_accel = Vector2(0.04, 0.04);
+        m_vel = Vector2(0.f, 0.f);
+        m_accel = Vector2(0.04f, 0.04f);
         m_direction.SetUnitLengthAndYawDegrees(m_angle);
         m_upright.SetUnitLengthAndYawDegrees(m_angle + 90);
         m_state = 0;

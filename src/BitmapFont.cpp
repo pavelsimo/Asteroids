@@ -32,8 +32,8 @@ bool BitmapFont::LoadGlyphsFromXML(const std::string& filename)
                 xml_schema::flags::dont_validate));
 
         m_family = static_cast<std::string>(font->family());
-        m_size = font->size();
-        m_height = font->height();
+        m_size = static_cast<int>(font->size());
+        m_height = static_cast<int>(font->height());
         m_style = static_cast<std::string>(font->style());
 
         Font::Char_sequence& cs(font->Char());
@@ -43,7 +43,7 @@ bool BitmapFont::LoadGlyphsFromXML(const std::string& filename)
             std::string code = static_cast<std::string>(ch->code());
             std::string offset = static_cast<std::string>(ch->offset());
             std::string rect = static_cast<std::string>(ch->rect());
-            int width = ch->width();
+            int width = static_cast<int>(ch->width());
 
             BitmapFontGlyph bitmapFontGlyph;
             ParseGlyphRect(rect, bitmapFontGlyph.x, bitmapFontGlyph.y,

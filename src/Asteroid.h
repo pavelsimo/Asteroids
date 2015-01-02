@@ -19,7 +19,7 @@ namespace asteroids
     class Asteroid : public Actor
     {
         public:
-            Asteroid(float radius, int numVertices, int speed = 2);
+            Asteroid(float radius, int numVertices, float speed = 2.f);
             ~Asteroid();
             virtual void OnRender() override;
             virtual void OnUpdate(World &world) override;

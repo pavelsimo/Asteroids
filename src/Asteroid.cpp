@@ -5,7 +5,7 @@ namespace asteroids
 {
     const float ASTEROID_ROTATION_ANGLE = 1.f;
 
-    Asteroid::Asteroid(float radius, int numVertices, int speed)
+    Asteroid::Asteroid(float radius, int numVertices, float speed)
     : Actor(),
       m_radius(radius),
       m_numVertices(numVertices),
@@ -26,15 +26,20 @@ namespace asteroids
         for(int angle = 0; angle < 360; angle+=steps)
         {
             Vector2 p;
-            p.SetUnitLengthAndYawDegrees(angle);
-            p *= (m_radius - Random<int>(1, m_radius * 0.5f));
+            p.SetUnitLengthAndYawDegrees(static_cast<float>(angle));
+            int halfRadius = static_cast<int>(m_radius * 0.5f);
+            float displacement = static_cast<float>(m_radius - Random<int>(1, halfRadius));
+            p *= displacement;
             m_points.push_back(p);
         }
 
         // Initialize the velocity
         int positiveX = Random<int>(0, 1);
         int positiveY = Random<int>(0, 1);
-        Vector2 dir = Vector2(Random<int>(1, 100), Random<int>(1, 100));
+        Vector2 dir = Vector2(
+            static_cast<float>(Random<int>(1, 100)), 
+            static_cast<float>(Random<int>(1, 100))
+        );
         if(!positiveX) dir.x = -dir.x;
         if(!positiveY) dir.y = -dir.y;
         dir.Normalize();

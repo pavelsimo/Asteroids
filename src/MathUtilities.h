@@ -9,7 +9,7 @@ typedef float real;
 typedef int32_t int32;
 typedef bool boolean;
 
-const real EPS = 1e-6;
+const real EPS = 0.000001f;
 const real PI = 3.14159265358979f;
 
 int32 RoundToInt(real x);
