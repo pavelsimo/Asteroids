@@ -5,7 +5,7 @@ PROJECT(Asteroids)
 SET(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
 
 # Ouput directories
-if (UNIX)
+IF (UNIX)
     SET(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/bin)
     SET(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/bin)
     SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/bin)
@@ -33,6 +33,48 @@ ADD_EXECUTABLE(
     src/Game.cpp
     src/AsteroidGame.cpp
 )
+
+IF (WIN32)
+    
+    # More information about the following macros:
+    # https://binglongx.wordpress.com/tag/safeseh/
+
+    # Append str to a string property of a target. 
+    # target:      string: target name. 
+    # property:    name of target’s property. e.g: COMPILE_FLAGS, or LINK_FLAGS 
+    # str:         string: string to be appended to the property 
+    MACRO(MACRO_APPEND_TARGET_PROPERTY target property str) 
+      GET_TARGET_PROPERTY(current_property ${target} ${property}) 
+      IF(NOT current_property) # property non-existent or empty 
+          SET_TARGET_PROPERTIES(${target} PROPERTIES ${property} ${str}) 
+      ELSE() 
+          SET_TARGET_PROPERTIES(${target} PROPERTIES ${property} "${current_property} ${str}") 
+      ENDIF() 
+    ENDMACRO(MACRO_APPEND_TARGET_PROPERTY)
+
+    # Add/append compile flags to a target. 
+    # target: string: target name. 
+    # flags : string: compile flags to be appended 
+    MACRO(MACRO_ADD_COMPILE_FLAGS target flags) 
+      MACRO_APPEND_TARGET_PROPERTY(${target} COMPILE_FLAGS ${flags}) 
+    ENDMACRO(MACRO_ADD_COMPILE_FLAGS)
+
+
+    # Add/append link flags to a target. 
+    # target: string: target name. 
+    # flags : string: link flags to be appended 
+    MACRO(MACRO_ADD_LINK_FLAGS target flags) 
+      MACRO_APPEND_TARGET_PROPERTY(${target} LINK_FLAGS ${flags}) 
+    ENDMACRO(MACRO_ADD_LINK_FLAGS) 
+
+
+    # Disable the Linker option Image Has Safe Exception Handlers (SAFESEH)
+    # This cause compilation errors in VS2012, VS2013 with the OpenAL dll.
+    MACRO_ADD_LINK_FLAGS(${PROJECT_NAME} "/SAFESEH:NO")
+
+ENDIF (WIN32)
+
+
 
 # OpenGL
 FIND_PACKAGE(OpenGL REQUIRED)
