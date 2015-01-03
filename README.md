@@ -37,7 +37,9 @@ Supported Platforms
 How the game looks
 ==================
 
-![ScreenShot](ScreenShot.png)
+![ScreenShot1](images/asteroids_screenshot_001.png)
+![ScreenShot2](images/asteroids_screenshot_002.png)
+![ScreenShot3](images/asteroids_screenshot_003.png)
 
 
 
