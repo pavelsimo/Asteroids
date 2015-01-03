@@ -14,7 +14,7 @@ Dependecies
 * libxsd
 
 ---
-* On a **Unix based system**, you need to do your own house keeping and install these dependencies.
+* On an **Unix based system**, you need to do your own house keeping and install these dependencies.
 * On **Windows**, all the dependecies are included under the deps directory.
 
 Building
